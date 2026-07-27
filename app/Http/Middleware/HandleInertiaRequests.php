@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Illuminate\Http\Request;
+use Inertia\Middleware;
+
+class HandleInertiaRequests extends Middleware
+{
+    /**
+     * The root template that is loaded on the first page visit.
+     *
+     * @var string
+     */
+    protected $rootView = 'app';
+
+    /**
+     * Determine the current asset version.
+     */
+    public function version(Request $request): ?string
+    {
+        return parent::version($request);
+    }
+
+    /**
+     * Define the props that are shared by default.
+     *
+     * @return array<string, mixed>
+     */
+    public function share(Request $request): array
+    {
+        return [
+            ...parent::share($request),
+            'auth' => [
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'is_admin' => (bool) $request->user()->is_admin,
+                ] : null,
+            ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
+            'settings' => [
+                'store_name' => \App\Models\Setting::get('store_name', 'Prayoga Tech'),
+                'whatsapp_number' => \App\Models\Setting::get('whatsapp_number', '628123456789'),
+                'store_description' => \App\Models\Setting::get('store_description', 'Penyedia Layanan Jasa Pembuatan Aplikasi & Akun Premium Terpercaya'),
+                'store_logo_path' => \App\Models\Setting::get('store_logo_path'),
+            ],
+        ];
+    }
+}
