@@ -1,12 +1,11 @@
 import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 
 export default function Index({ products }) {
     const handleDelete = (id) => {
         if (confirm('Apakah Anda yakin ingin menghapus produk ini? Semua data paket langganan dan pesanan terkait produk ini juga akan terhapus.')) {
-            const form = useForm();
-            form.delete(route('admin.products.destroy', id));
+            router.delete(route('admin.products.destroy', id));
         }
     };
 

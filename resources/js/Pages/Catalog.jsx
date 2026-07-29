@@ -25,7 +25,7 @@ export default function Catalog({ products, categories, filters }) {
         }
         localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
         setWishlist(updatedWishlist);
-        
+
         // Dispatch event so layout updates its badge counts
         window.dispatchEvent(new Event('wishlist-updated'));
     };
@@ -60,6 +60,29 @@ export default function Catalog({ products, categories, filters }) {
         router.get(route('katalog'));
     };
 
+    const getLogoPath = (productName) => {
+        if (!productName) return null;
+        const nameLower = productName.toLowerCase();
+        if (nameLower.includes("canva")) return "/image/Logo Aplikasi/Canva Pro.png";
+        if (nameLower.includes("chatgpt") || nameLower.includes("gpt")) return "/image/Logo Aplikasi/1. ChatGpt.png";
+        if (nameLower.includes("claude")) return "/image/Logo Aplikasi/2. Claude.jpg";
+        if (nameLower.includes("midjourney")) return "/image/Logo Aplikasi/3. Midjourney.png";
+        if (nameLower.includes("youtube")) return "/image/Logo Aplikasi/4. Youtube Premium.webp";
+        if (nameLower.includes("disney")) return "/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg";
+        if (nameLower.includes("netflix")) return "/image/Logo Aplikasi/6. Netflix.png";
+        if (nameLower.includes("spotify")) return "/image/Logo Aplikasi/Spotify_App_Logo.jpg";
+        if (nameLower.includes("capcut")) return "/image/Logo Aplikasi/capcut pro.png";
+        if (nameLower.includes("figma")) return "/image/Logo Aplikasi/figma.webp";
+        if (nameLower.includes("hbo")) return "/image/Logo Aplikasi/HBO Max.jpg";
+        if (nameLower.includes("vidio")) return "/image/Logo Aplikasi/vidio.jpg";
+        if (nameLower.includes("viu")) return "/image/Logo Aplikasi/viu.webp";
+        if (nameLower.includes("dramabox") || nameLower.includes("drama")) return "/image/Logo Aplikasi/Dramaboc.png";
+        if (nameLower.includes("grok")) return "/image/Logo Aplikasi/super grok.png";
+        if (nameLower.includes("bstation") || nameLower.includes("bilibili")) return "/image/Logo Aplikasi/bstation.png";
+        if (nameLower.includes("iqiyi")) return "/image/Logo Aplikasi/iQIYI.jpg";
+        return null;
+    };
+
     const renderProductThumbnail = (product) => {
         if (product.image_path) {
             return (
@@ -68,6 +91,16 @@ export default function Catalog({ products, categories, filters }) {
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+            );
+        }
+
+        const logoFile = getLogoPath(product.name);
+        if (logoFile) {
+            return (
+                <div className="w-full h-full bg-slate-900/90 p-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 opacity-95" />
+                    <img src={logoFile} alt={product.name} className="w-16 h-16 object-contain relative z-10 drop-shadow-md" />
+                </div>
             );
         }
 
@@ -137,11 +170,11 @@ export default function Catalog({ products, categories, filters }) {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                    
+
                     {/* Left Sidebar Filter Section */}
                     <div className="space-y-6">
                         <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-6">
-                            
+
                             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                                 <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wider">Filter Pencarian</h3>
                                 <button onClick={handleResetFilters} className="text-[10px] text-rose-600 font-bold hover:underline">
@@ -252,10 +285,10 @@ export default function Catalog({ products, categories, filters }) {
                                                 onClick={(e) => toggleWishlist(product.id, e)}
                                                 className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
                                             >
-                                                <svg 
-                                                    className="w-4.5 h-4.5" 
-                                                    fill={isWished ? 'currentColor' : 'none'} 
-                                                    viewBox="0 0 24 24" 
+                                                <svg
+                                                    className="w-4.5 h-4.5"
+                                                    fill={isWished ? 'currentColor' : 'none'}
+                                                    viewBox="0 0 24 24"
                                                     stroke="currentColor"
                                                 >
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />

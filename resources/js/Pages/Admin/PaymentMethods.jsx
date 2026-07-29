@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 
 export default function PaymentMethods({ paymentMethods }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -65,8 +65,7 @@ export default function PaymentMethods({ paymentMethods }) {
 
     const handleDelete = (id) => {
         if (confirm('Apakah Anda yakin ingin menghapus metode pembayaran ini?')) {
-            const form = useForm();
-            form.delete(route('admin.payment-methods.destroy', id));
+            router.delete(route('admin.payment-methods.destroy', id));
         }
     };
 

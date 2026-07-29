@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 
 export default function Categories({ categories }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -44,8 +44,7 @@ export default function Categories({ categories }) {
 
     const handleDelete = (id) => {
         if (confirm('Apakah Anda yakin ingin menghapus kategori ini? Semua produk dalam kategori ini akan di-set menjadi tidak memiliki kategori.')) {
-            const form = useForm();
-            form.delete(route('admin.categories.destroy', id));
+            router.delete(route('admin.categories.destroy', id));
         }
     };
 

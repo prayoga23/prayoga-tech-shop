@@ -121,6 +121,30 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
         );
     };
 
+    // Helper to get real logo file path if available
+    const getLogoPath = (productName) => {
+        if (!productName) return null;
+        const nameLower = productName.toLowerCase();
+        if (nameLower.includes("canva")) return "/image/Logo Aplikasi/Canva Pro.png";
+        if (nameLower.includes("chatgpt") || nameLower.includes("gpt")) return "/image/Logo Aplikasi/1. ChatGpt.png";
+        if (nameLower.includes("claude")) return "/image/Logo Aplikasi/2. Claude.jpg";
+        if (nameLower.includes("midjourney")) return "/image/Logo Aplikasi/3. Midjourney.png";
+        if (nameLower.includes("youtube")) return "/image/Logo Aplikasi/4. Youtube Premium.webp";
+        if (nameLower.includes("disney")) return "/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg";
+        if (nameLower.includes("netflix")) return "/image/Logo Aplikasi/6. Netflix.png";
+        if (nameLower.includes("spotify")) return "/image/Logo Aplikasi/Spotify_App_Logo.jpg";
+        if (nameLower.includes("capcut")) return "/image/Logo Aplikasi/capcut pro.png";
+        if (nameLower.includes("figma")) return "/image/Logo Aplikasi/figma.png";
+        if (nameLower.includes("hbo")) return "/image/Logo Aplikasi/HBO Max.jpg";
+        if (nameLower.includes("vidio")) return "/image/Logo Aplikasi/vidio.jpg";
+        if (nameLower.includes("viu")) return "/image/Logo Aplikasi/viu.webp";
+        if (nameLower.includes("dramabox") || nameLower.includes("drama")) return "/image/Logo Aplikasi/Dramaboc.png";
+        if (nameLower.includes("grok")) return "/image/Logo Aplikasi/super grok.png";
+        if (nameLower.includes("bstation") || nameLower.includes("bilibili")) return "/image/Logo Aplikasi/bstation.png";
+        if (nameLower.includes("iqiyi")) return "/image/Logo Aplikasi/iQIYI.jpg";
+        return null;
+    };
+
     // Helper to render product thumbnail background / brand badge
     const renderProductThumbnail = (product) => {
         if (product.image_path) {
@@ -130,6 +154,16 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
+            );
+        }
+
+        const logoFile = getLogoPath(product.name);
+        if (logoFile) {
+            return (
+                <div className="w-full h-full bg-slate-900/90 p-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 opacity-95" />
+                    <img src={logoFile} alt={product.name} className="w-16 h-16 object-contain relative z-10 drop-shadow-md" />
+                </div>
             );
         }
 
@@ -220,7 +254,7 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
                                                         href={banner.link_url}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="px-5 py-2.5 bg-white text-indigo-955 text-indigo-950 text-xs font-bold rounded-xl hover:bg-slate-100 shadow-lg inline-block transition-transform hover:-translate-y-0.5"
+                                                        className="px-5 py-2.5 bg-white text-indigo-950 text-xs font-bold rounded-xl hover:bg-slate-100 shadow-lg inline-block transition-transform hover:-translate-y-0.5"
                                                     >
                                                         Lihat Detail
                                                     </a>
@@ -239,48 +273,120 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
                             ))
                         ) : (
                             <>
-                                {/* Slide 1 */}
-                                <div className={`absolute inset-0 bg-gradient-to-r from-indigo-700 to-violet-600 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="max-w-md text-white space-y-4">
+                                {/* Slide 1 — AI & Design */}
+                                <div className={`absolute inset-0 bg-gradient-to-br from-indigo-700 via-violet-700 to-purple-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+                                    <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
+                                    <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+                                    <div className="max-w-md text-white space-y-4 relative z-10">
                                         <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Garansi Penuh 100%</span>
                                         <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Canva Pro, Spotify & Netflix Murah</h2>
                                         <p className="text-white/80 text-xs md:text-sm">Akses aplikasi premium legal dengan harga termurah dan proses pengiriman akses cepat.</p>
                                         <Link href={route('katalog')} className="px-5 py-2 bg-white text-indigo-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Beli Sekarang</Link>
                                     </div>
-                                    <div className="hidden md:flex w-72 h-72 items-center justify-center bg-white/5 rounded-full border border-white/10 shrink-0">
-                                        <svg className="w-32 h-32 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
+                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
+                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Canva Pro.png" alt="Canva" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/1. ChatGpt.png" alt="ChatGPT" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/2. Claude.jpg" alt="Claude" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/3. Midjourney.png" alt="Midjourney" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/capcut pro.png" alt="CapCut" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/figma.png" alt="Figma" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/super grok.png" alt="Super Grok" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Slide 2 */}
-                                <div className={`absolute inset-0 bg-gradient-to-r from-sky-700 to-indigo-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="max-w-md text-white space-y-4">
+                                {/* Slide 2 — Streaming & Entertainment */}
+                                <div className={`absolute inset-0 bg-gradient-to-br from-sky-700 via-blue-800 to-indigo-900 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+                                    <div className="absolute -top-16 -right-16 w-64 h-64 bg-sky-400/10 rounded-full blur-3xl" />
+                                    <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
+                                    <div className="max-w-md text-white space-y-4 relative z-10">
                                         <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Layanan Instan</span>
                                         <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Proses Cepat Kurang Dari 10 Menit</h2>
                                         <p className="text-white/80 text-xs md:text-sm">Setelah pembayaran diverifikasi, kredensial akun premium langsung terkirim ke dashboard Anda.</p>
                                         <Link href={route('katalog')} className="px-5 py-2 bg-white text-sky-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Lihat Katalog</Link>
                                     </div>
-                                    <div className="hidden md:flex w-72 h-72 items-center justify-center bg-white/5 rounded-full border border-white/10 shrink-0">
-                                        <svg className="w-32 h-32 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                        </svg>
+                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
+                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/4. Youtube Premium.webp" alt="YouTube" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/6. Netflix.png" alt="Netflix" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg" alt="Disney+" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/HBO Max.jpg" alt="HBO Max" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/vidio.jpg" alt="Vidio" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/viu.webp" alt="Viu" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Dramaboc.png" alt="Dramabox" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Slide 3 */}
-                                <div className={`absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="max-w-md text-white space-y-4">
+                                {/* Slide 3 — Payment & More */}
+                                <div className={`absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
+                                    <div className="absolute -top-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
+                                    <div className="absolute -bottom-28 -left-28 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl" />
+                                    <div className="max-w-md text-white space-y-4 relative z-10">
                                         <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Metode Transfer</span>
                                         <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Transfer Bank & QRIS E-Wallet Lengkap</h2>
                                         <p className="text-white/80 text-xs md:text-sm">Kemudahan pembayaran menggunakan transfer manual BCA, Mandiri, Gopay, OVO, Dana, LinkAja.</p>
                                         <Link href={route('cara-pemesanan')} className="px-5 py-2 bg-white text-emerald-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Cara Bayar</Link>
                                     </div>
-                                    <div className="hidden md:flex w-72 h-72 items-center justify-center bg-white/5 rounded-full border border-white/10 shrink-0">
-                                        <svg className="w-32 h-32 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                        </svg>
+                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
+                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/1. ChatGpt.png" alt="ChatGPT" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Canva Pro.png" alt="Canva" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/4. Youtube Premium.webp" alt="YouTube" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/6. Netflix.png" alt="Netflix" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/2. Claude.jpg" alt="Claude" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/capcut pro.png" alt="CapCut" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
+                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
+                                            <img src="/image/Logo Aplikasi/HBO Max.jpg" alt="HBO Max" className="w-full h-full object-contain rounded-xl" />
+                                        </div>
                                     </div>
                                 </div>
                             </>
@@ -310,8 +416,8 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
                             className="flex flex-col items-center gap-2.5 cursor-pointer group text-center shrink-0"
                         >
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${!selectedCategory
-                                    ? 'bg-indigo-50 border-indigo-600 shadow-md'
-                                    : 'bg-slate-50 border-slate-100 hover:border-slate-300'
+                                ? 'bg-indigo-50 border-indigo-600 shadow-md'
+                                : 'bg-slate-50 border-slate-100 hover:border-slate-300'
                                 }`}>
                                 <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -329,8 +435,8 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
                                     className="flex flex-col items-center gap-2.5 cursor-pointer group text-center shrink-0"
                                 >
                                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${isSelected
-                                            ? 'bg-indigo-50 border-indigo-600 shadow-md'
-                                            : 'bg-slate-50 border-slate-100 hover:border-slate-300'
+                                        ? 'bg-indigo-50 border-indigo-600 shadow-md'
+                                        : 'bg-slate-50 border-slate-100 hover:border-slate-300'
                                         }`}>
                                         {getCategoryIcon(cat.slug)}
                                     </div>
