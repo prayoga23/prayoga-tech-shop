@@ -2,28 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import BuyerLayout from '@/Layouts/BuyerLayout';
 
-export default function Welcome({ auth, products, categories, selectedCategory, search, settings, banners = [] }) {
-    const [activeBanner, setActiveBanner] = useState(0);
+export default function Welcome({ auth, products = [], categories = [], selectedCategory, search, settings, banners = [] }) {
     const [wishlist, setWishlist] = useState([]);
 
-    // Load wishlist from localStorage
+    // Quick Estimator State
+    const [estPlatform, setEstPlatform] = useState('web'); // 'web', 'android', 'bundle'
+    const [estCategory, setEstCategory] = useState('company'); // 'company', 'shop', 'system'
+    const [estFeatures, setEstFeatures] = useState({
+        admin: true,
+        payment: false,
+        notification: false,
+        multilang: false,
+        domain: true,
+        playstore: false
+    });
+
     useEffect(() => {
         const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
         setWishlist(storedWishlist);
     }, []);
-
-    // Filter banners
-    const carouselBanners = banners ? banners.filter(b => b.type === 'carousel') : [];
-    const middleBanners = banners ? banners.filter(b => b.type === 'middle') : [];
-
-    // Auto-slide banner every 5 seconds
-    const bannerCount = carouselBanners.length > 0 ? carouselBanners.length : 3;
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setActiveBanner((prev) => (prev + 1) % bannerCount);
-        }, 5000);
-        return () => clearInterval(timer);
-    }, [bannerCount]);
 
     const toggleWishlist = (productId, e) => {
         e.preventDefault();
@@ -35,15 +32,7 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
         }
         localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
         setWishlist(updatedWishlist);
-
-        // Dispatch update event
         window.dispatchEvent(new Event('wishlist-updated'));
-    };
-
-    const handleCategoryFilter = (slug) => {
-        router.get(route('home'), {
-            category: slug || undefined
-        });
     };
 
     const formatIDR = (value) => {
@@ -55,818 +44,610 @@ export default function Welcome({ auth, products, categories, selectedCategory, 
         }).format(value);
     };
 
-    // Filter products for separate sections
-    const aiProducts = products.filter(p => p.category?.slug?.toLowerCase().includes('ai'));
-    const streamingProducts = products.filter(p => p.category?.slug?.toLowerCase().includes('movie') || p.category?.slug?.toLowerCase().includes('stream') || p.category?.slug?.toLowerCase().includes('music'));
-    const designProducts = products.filter(p => p.category?.slug?.toLowerCase().includes('design') || p.category?.slug?.toLowerCase().includes('product'));
-    const generalProducts = products.slice(0, 6);
+    // Calculate Estimator Price
+    const calculateEstimatedPrice = () => {
+        let base = 950000;
+        if (estPlatform === 'web') {
+            if (estCategory === 'company') base = 1200000;
+            if (estCategory === 'shop') base = 2500000;
+            if (estCategory === 'system') base = 5000000;
+        } else if (estPlatform === 'android') {
+            base = 3500000;
+        } else if (estPlatform === 'bundle') {
+            base = 6500000;
+        }
 
-    // Helper to render category icon
-    const getCategoryIcon = (slug) => {
-        const lowerSlug = slug?.toLowerCase() || '';
-        if (lowerSlug.includes('ai') || lowerSlug.includes('bot')) {
-            return (
-                <svg className="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('movie') || lowerSlug.includes('stream') || lowerSlug.includes('film')) {
-            return (
-                <svg className="w-6 h-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('music') || lowerSlug.includes('lagu')) {
-            return (
-                <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zM9 10l12-3" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('design') || lowerSlug.includes('edit')) {
-            return (
-                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('product') || lowerSlug.includes('office')) {
-            return (
-                <svg className="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('internet') || lowerSlug.includes('vpn') || lowerSlug.includes('dev')) {
-            return (
-                <svg className="w-6 h-6 text-sky-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-            );
-        }
-        if (lowerSlug.includes('social') || lowerSlug.includes('marketing') || lowerSlug.includes('smm')) {
-            return (
-                <svg className="w-6 h-6 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-            );
-        }
-        return (
-            <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2" />
-            </svg>
-        );
+        if (estFeatures.payment) base += 1000000;
+        if (estFeatures.notification) base += 500000;
+        if (estFeatures.multilang) base += 750000;
+        if (estFeatures.playstore) base += 600000;
+
+        return base;
     };
 
-    // Helper to get real logo file path if available
-    const getLogoPath = (productName) => {
-        if (!productName) return null;
-        const nameLower = productName.toLowerCase();
-        if (nameLower.includes("canva")) return "/image/Logo Aplikasi/Canva Pro.png";
-        if (nameLower.includes("chatgpt") || nameLower.includes("gpt")) return "/image/Logo Aplikasi/1. ChatGpt.png";
-        if (nameLower.includes("claude")) return "/image/Logo Aplikasi/2. Claude.jpg";
-        if (nameLower.includes("midjourney")) return "/image/Logo Aplikasi/3. Midjourney.png";
-        if (nameLower.includes("youtube")) return "/image/Logo Aplikasi/4. Youtube Premium.webp";
-        if (nameLower.includes("disney")) return "/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg";
-        if (nameLower.includes("netflix")) return "/image/Logo Aplikasi/6. Netflix.png";
-        if (nameLower.includes("spotify")) return "/image/Logo Aplikasi/Spotify_App_Logo.jpg";
-        if (nameLower.includes("capcut")) return "/image/Logo Aplikasi/capcut pro.png";
-        if (nameLower.includes("figma")) return "/image/Logo Aplikasi/figma.png";
-        if (nameLower.includes("hbo")) return "/image/Logo Aplikasi/HBO Max.jpg";
-        if (nameLower.includes("vidio")) return "/image/Logo Aplikasi/vidio.jpg";
-        if (nameLower.includes("viu")) return "/image/Logo Aplikasi/viu.webp";
-        if (nameLower.includes("dramabox") || nameLower.includes("drama")) return "/image/Logo Aplikasi/Dramaboc.png";
-        if (nameLower.includes("grok")) return "/image/Logo Aplikasi/super grok.png";
-        if (nameLower.includes("bstation") || nameLower.includes("bilibili")) return "/image/Logo Aplikasi/bstation.png";
-        if (nameLower.includes("iqiyi")) return "/image/Logo Aplikasi/iQIYI.jpg";
-        return null;
-    };
+    const whatsappNumber = settings?.whatsapp_number || '628123456789';
 
-    // Helper to render product thumbnail background / brand badge
-    const renderProductThumbnail = (product) => {
-        if (product.image_path) {
-            return (
-                <img
-                    src={`/storage/${product.image_path}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-            );
+    // Static Portfolios for Showcase
+    const portfolioShowcase = [
+        {
+            title: "Website Profil Institut Darul Falah",
+            type: "Website & CMS",
+            tech: ["Laravel", "Tailwind", "MySQL"],
+            image: "/image/website_sekolah/oke.gif",
+            link: "https://indafa.ac.id/"
+        },
+        {
+            title: "Aplikasi Reading Log SMKN 3 Malang",
+            type: "Web Application",
+            tech: ["PHP", "JavaScript", "Bootstrap"],
+            image: "/image/website_sekolah/website-sekolah.gif.gif",
+            link: "https://readinglogsmkn3malang.com/"
+        },
+        {
+            title: "Aplikasi Kasir POS Toko Tiga Putri",
+            type: "Web & POS System",
+            tech: ["Laravel", "Tailwind CSS", "POS"],
+            image: "/image/kasir/foto-slide.gif"
+        },
+        {
+            title: "AHES Maps AR Mobile App",
+            type: "Android App (Flutter)",
+            tech: ["Flutter", "AR Navigation", "REST API"],
+            image: "/image/Frame-6.png"
+        },
+        {
+            title: "Marketplace E-Commerce Mobile",
+            type: "Android & iOS App",
+            tech: ["Flutter", "Payment Gateway"],
+            image: "/image/Frame-7.png"
+        },
+        {
+            title: "AI Job Platform UI/UX Design",
+            type: "Figma Prototype",
+            tech: ["Figma", "UI/UX Design"],
+            image: "/image/Frame-5.png"
         }
-
-        const logoFile = getLogoPath(product.name);
-        if (logoFile) {
-            return (
-                <div className="w-full h-full bg-slate-900/90 p-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 opacity-95" />
-                    <img src={logoFile} alt={product.name} className="w-16 h-16 object-contain relative z-10 drop-shadow-md" />
-                </div>
-            );
-        }
-
-        const nameLower = product.name?.toLowerCase() || '';
-        let bgGradient = "from-[#0B2545] to-[#1F4E79]";
-        let textColor = "text-white";
-
-        if (nameLower.includes("netflix")) {
-            bgGradient = "from-red-950 via-slate-900 to-red-900";
-            textColor = "text-red-500";
-        } else if (nameLower.includes("spotify")) {
-            bgGradient = "from-emerald-950 via-slate-900 to-emerald-900";
-            textColor = "text-emerald-400";
-        } else if (nameLower.includes("canva")) {
-            bgGradient = "from-cyan-900 via-teal-900 to-indigo-900";
-            textColor = "text-cyan-300";
-        } else if (nameLower.includes("chatgpt") || nameLower.includes("claude") || nameLower.includes("ai")) {
-            bgGradient = "from-purple-950 via-indigo-900 to-violet-950";
-            textColor = "text-amber-300";
-        } else if (nameLower.includes("disney")) {
-            bgGradient = "from-sky-950 via-indigo-950 to-blue-900";
-            textColor = "text-sky-300";
-        } else if (nameLower.includes("youtube")) {
-            bgGradient = "from-red-900 via-rose-950 to-slate-900";
-            textColor = "text-red-500";
-        } else if (nameLower.includes("microsoft") || nameLower.includes("office")) {
-            bgGradient = "from-amber-900 via-rose-950 to-[#0B2545]";
-            textColor = "text-amber-400";
-        } else if (nameLower.includes("discord")) {
-            bgGradient = "from-indigo-950 via-purple-900 to-slate-900";
-            textColor = "text-indigo-400";
-        } else if (nameLower.includes("zoom")) {
-            bgGradient = "from-sky-900 via-blue-950 to-slate-900";
-            textColor = "text-sky-400";
-        }
-
-        return (
-            <div className={`w-full h-full bg-gradient-to-br ${bgGradient} flex flex-col items-center justify-center p-3 text-center group-hover:scale-105 transition-transform duration-300`}>
-                <span className={`text-lg font-black tracking-wider ${textColor}`}>
-                    {product.name.substring(0, 3).toUpperCase()}
-                </span>
-                <span className="text-[9px] font-bold text-white/60 uppercase tracking-widest mt-1 line-clamp-1">
-                    {product.name}
-                </span>
-            </div>
-        );
-    };
+    ];
 
     return (
         <BuyerLayout>
-            <Head title="Jual Akun & Aplikasi Premium Murah Legal" />
+            <Head title="Jasa Pembuatan Aplikasi Website & Android - Prayoga Tech Software House" />
 
-            {/* Hero Carousel Section */}
-            <section className="bg-slate-100 py-6">
-                <div className="max-w-7xl mx-auto px-4 md:px-8">
-                    <div className="relative h-[220px] md:h-[350px] rounded-3xl overflow-hidden shadow-md group">
-                        {carouselBanners.length > 0 ? (
-                            carouselBanners.map((banner, index) => (
-                                <div
-                                    key={banner.id}
-                                    className={`absolute inset-0 transition-opacity duration-1000 ${activeBanner === index ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                                        }`}
-                                >
-                                    <div className="absolute inset-0 bg-slate-950/30 backdrop-blur-[0.5px] z-10" />
-                                    <img
-                                        src={`/storage/${banner.image_path}`}
-                                        alt={banner.title || 'Promo'}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
-                                    <div className="absolute inset-0 z-20 flex flex-col justify-center p-8 md:p-16 text-white space-y-3.5 max-w-xl">
-                                        <span className="self-start px-3 py-1 bg-white/20 backdrop-blur-md border border-white/30 rounded-full text-[9px] uppercase font-black tracking-widest shadow-sm">
-                                            PROMOSI SPESIAL
+            <div className="bg-slate-950 text-slate-100 min-h-screen">
+
+                {/* 1. HERO SECTION */}
+                <section className="relative overflow-hidden pt-12 pb-20 md:py-24 border-b border-slate-800/80 bg-gradient-to-b from-slate-950 via-[#0A0F24] to-slate-950">
+                    {/* Glowing Accent Orbs */}
+                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-indigo-600/15 blur-[120px] rounded-full pointer-events-none" />
+                    <div className="absolute top-10 right-10 w-[300px] h-[300px] bg-cyan-500/10 blur-[100px] rounded-full pointer-events-none" />
+
+                    <div className="max-w-7xl mx-auto px-4 md:px-8 relative z-10">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+                            {/* Left Hero Text */}
+                            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold backdrop-blur-md">
+                                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+                                    <span>Software House & Developer Studio Resmi</span>
+                                </div>
+
+                                <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight">
+                                    Jasa Pembuatan Aplikasi <br className="hidden sm:inline" />
+                                    <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-300 to-emerald-400">
+                                        Website & Android
+                                    </span>
+                                </h1>
+
+                                <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto lg:mx-0 font-normal">
+                                    Wujudkan sistem digital, toko online, portal perusahaan, hingga aplikasi mobile Android impian Anda. Diproses cepat oleh tim developer berpengalaman, desain modern, kode clean, dan bergaransi maintenance resmi.
+                                </p>
+
+                                {/* Tech Badges */}
+                                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 pt-1">
+                                    {['Laravel', 'React.js', 'Next.js', 'Flutter', 'Android Native', 'Tailwind CSS', 'MySQL'].map((tech, idx) => (
+                                        <span key={idx} className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 text-[11px] font-mono font-medium">
+                                            {tech}
                                         </span>
-                                        {banner.title && (
-                                            <h2 className="text-2xl md:text-4xl font-extrabold leading-tight text-white drop-shadow-md">
-                                                {banner.title}
-                                            </h2>
-                                        )}
-                                        {banner.subtitle && (
-                                            <p className="text-white/90 text-xs md:text-sm drop-shadow-sm font-medium line-clamp-2 max-w-md">
-                                                {banner.subtitle}
-                                            </p>
-                                        )}
-                                        {banner.link_url && (
-                                            <div className="pt-2">
-                                                {banner.link_url.startsWith('http') ? (
-                                                    <a
-                                                        href={banner.link_url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="px-5 py-2.5 bg-white text-indigo-950 text-xs font-bold rounded-xl hover:bg-slate-100 shadow-lg inline-block transition-transform hover:-translate-y-0.5"
-                                                    >
-                                                        Lihat Detail
-                                                    </a>
-                                                ) : (
-                                                    <Link
-                                                        href={banner.link_url}
-                                                        className="px-5 py-2.5 bg-white text-indigo-950 text-xs font-bold rounded-xl hover:bg-slate-100 shadow-lg inline-block transition-transform hover:-translate-y-0.5"
-                                                    >
-                                                        Beli Sekarang
-                                                    </Link>
+                                    ))}
+                                </div>
+
+                                {/* Hero Action Buttons */}
+                                <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-4">
+                                    <Link
+                                        href={route('katalog')}
+                                        className="w-full sm:w-auto px-7 py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-extrabold text-sm rounded-2xl shadow-xl shadow-indigo-600/30 transition-all hover:scale-105 flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                        </svg>
+                                        Lihat Paket Website & Android
+                                    </Link>
+                                    <a
+                                        href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Halo Prayoga Tech, saya ingin konsultasi pembuatan aplikasi Website / Android.')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full sm:w-auto px-7 py-3.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 font-extrabold text-sm rounded-2xl transition-all flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5 text-emerald-400 fill-current" viewBox="0 0 24 24">
+                                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.489.002 9.961-4.47 9.964-9.964.002-2.661-1.033-5.161-2.915-7.044C16.438 1.713 13.935.672 12 1.72c-2.661 0-5.162 1.033-7.045 2.915C3.072 6.518 2.03 9.02 2.03 11.68c-.002 1.729.547 3.42 1.587 4.908l-.997 3.642 3.72-.975zm11.367-5.228c-.302-.15-1.787-.881-2.062-.981-.275-.101-.475-.15-.675.15-.2.3-.775.981-.95 1.181-.175.2-.35.225-.65.075-.3-.15-1.265-.467-2.41-1.487-.89-.793-1.492-1.773-1.667-2.073-.175-.3-.019-.461.13-.61.135-.133.302-.35.45-.525.15-.175.2-.3.3-.5.1-.2.05-.375-.025-.525-.075-.15-.675-1.625-.925-2.225-.244-.589-.491-.51-.675-.52-.175-.01-.375-.01-.575-.01-.2 0-.525.075-.8.375-.275.3-1.05 1.025-1.05 2.5 0 1.475 1.075 2.9 1.225 3.1.15.2 2.11 3.22 5.11 4.52.714.31 1.272.496 1.707.635.717.228 1.368.196 1.883.119.574-.085 1.787-.73 2.037-1.43.25-.7.25-1.3.175-1.43-.075-.13-.275-.205-.575-.355z" />
+                                        </svg>
+                                        Konsultasi WA Gratis
+                                    </a>
+                                </div>
+                            </div>
+
+                            {/* Right Hero Card / Visual Preview */}
+                            <div className="lg:col-span-5 relative">
+                                <div className="relative rounded-3xl bg-slate-900/90 border border-slate-800 p-6 shadow-2xl backdrop-blur-xl space-y-6">
+                                    <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-rose-500" />
+                                            <div className="w-3 h-3 rounded-full bg-amber-500" />
+                                            <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                                        </div>
+                                        <span className="text-[11px] font-mono text-cyan-400">Prayoga Tech Dev Studio</span>
+                                    </div>
+
+                                    {/* Feature Cards inside Hero Visual */}
+                                    <div className="space-y-3">
+                                        <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-500/30 flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold text-lg">🌐</div>
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-white">Website & Web App</h4>
+                                                    <p className="text-[10px] text-slate-400">Laravel / React / Next.js</p>
+                                                </div>
+                                            </div>
+                                            <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">Free Domain .com</span>
+                                        </div>
+
+                                        <div className="p-4 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-cyan-600/30 text-cyan-400 flex items-center justify-center font-bold text-lg">📱</div>
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-white">Aplikasi Android</h4>
+                                                    <p className="text-[10px] text-slate-400">Flutter Cross-Platform</p>
+                                                </div>
+                                            </div>
+                                            <span className="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-bold">Play Store Ready</span>
+                                        </div>
+
+                                        <div className="p-4 rounded-2xl bg-slate-800/80 border border-slate-700 flex items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-lg">⚡</div>
+                                                <div>
+                                                    <h4 className="text-xs font-bold text-white">Garansi & Source Code</h4>
+                                                    <p className="text-[10px] text-slate-400">100% Hak Milik Klien</p>
+                                                </div>
+                                            </div>
+                                            <span className="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold">Garansi 1-6 Bln</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-2 text-center border-t border-slate-800">
+                                        <p className="text-xs text-slate-400">
+                                            🚀 Mulai pengerjaan dari <strong className="text-white">Rp 950.000</strong> saja!
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 2. STATS BAR */}
+                <section className="border-b border-slate-800/80 bg-slate-900/60 py-8">
+                    <div className="max-w-7xl mx-auto px-4 md:px-8">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                            <div className="space-y-1">
+                                <h3 className="text-2xl md:text-3xl font-black text-indigo-400">150+</h3>
+                                <p className="text-xs text-slate-400 font-medium">Proyek Web & App Completed</p>
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-2xl md:text-3xl font-black text-cyan-400">99.8%</h3>
+                                <p className="text-xs text-slate-400 font-medium">Tingkat Kepuasan Klien</p>
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-2xl md:text-3xl font-black text-emerald-400">1-6 Bulan</h3>
+                                <p className="text-xs text-slate-400 font-medium">Garansi Maintenance Resmi</p>
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-2xl md:text-3xl font-black text-amber-400">100%</h3>
+                                <p className="text-xs text-slate-400 font-medium">Source Code Hak Milik</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 3. CORE SERVICE CATEGORIES GRID */}
+                <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
+                    <div className="text-center space-y-3 mb-12">
+                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Layanan Utama Kami</span>
+                        <h2 className="text-2xl sm:text-4xl font-black text-white">Spesialis Software House Website & Android</h2>
+                        <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+                            Pilih jenis layanan pengembangan software yang sesuai dengan kebutuhan skala bisnis Anda.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {/* Category Card 1 */}
+                        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all hover:-translate-y-1 group">
+                            <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">🌐</div>
+                            <h3 className="text-base font-bold text-white mb-2">Jasa Pembuatan Website</h3>
+                            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                                Company Profile, Landing Page, E-Commerce, dan Portal Berita dengan responsive design & SEO.
+                            </p>
+                            <Link href={route('katalog')} className="text-xs font-bold text-indigo-400 hover:text-indigo-300 inline-flex items-center gap-1">
+                                Lihat Paket Website &rarr;
+                            </Link>
+                        </div>
+
+                        {/* Category Card 2 */}
+                        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-cyan-500/50 transition-all hover:-translate-y-1 group">
+                            <div className="w-12 h-12 rounded-2xl bg-cyan-600/20 text-cyan-400 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">📱</div>
+                            <h3 className="text-base font-bold text-white mb-2">Aplikasi Android Mobile</h3>
+                            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                                Aplikasi Android Native & Flutter Cross-Platform modern, cepat, dan siap rilis di Google Play Store.
+                            </p>
+                            <Link href={route('katalog')} className="text-xs font-bold text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-1">
+                                Lihat Paket Android &rarr;
+                            </Link>
+                        </div>
+
+                        {/* Category Card 3 */}
+                        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-all hover:-translate-y-1 group">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-600/20 text-amber-400 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">🎨</div>
+                            <h3 className="text-base font-bold text-white mb-2">UI/UX Design (Figma)</h3>
+                            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                                Perancangan antarmuka pengguna interaktif (clickable prototype) untuk aplikasi mobile & web.
+                            </p>
+                            <Link href={route('katalog')} className="text-xs font-bold text-amber-400 hover:text-amber-300 inline-flex items-center gap-1">
+                                Lihat Paket UI/UX &rarr;
+                            </Link>
+                        </div>
+
+                        {/* Category Card 4 */}
+                        <div className="p-6 rounded-3xl bg-slate-900 border border-slate-800 hover:border-emerald-500/50 transition-all hover:-translate-y-1 group">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center font-bold text-2xl mb-4 group-hover:scale-110 transition-transform">⚡</div>
+                            <h3 className="text-base font-bold text-white mb-2">Maintenance & VPS Server</h3>
+                            <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                                Pemeliharaan rutin, perbaikan bug, backup otomatis, serta setup cloud VPS server (Nginx/SSL).
+                            </p>
+                            <Link href={route('katalog')} className="text-xs font-bold text-emerald-400 hover:text-emerald-300 inline-flex items-center gap-1">
+                                Lihat Maintenance &rarr;
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 4. FEATURED PRODUCTS & PACKAGES GRID */}
+                <section className="py-16 bg-slate-900/60 border-y border-slate-800/80 px-4 md:px-8">
+                    <div className="max-w-7xl mx-auto space-y-10">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div>
+                                <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Katalog Paket Pilihan</span>
+                                <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">Paket Jasa Pembuatan Siap Pesan</h2>
+                            </div>
+                            <Link
+                                href={route('katalog')}
+                                className="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-bold text-white rounded-xl transition-all self-start md:self-auto"
+                            >
+                                Lihat Semua Paket Jasa &rarr;
+                            </Link>
+                        </div>
+
+                        {/* Products / Packages Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {products.map((product) => {
+                                const packageCount = product.packages?.length || 0;
+                                const minPrice = product.packages && product.packages.length > 0
+                                    ? Math.min(...product.packages.map(p => p.price))
+                                    : 0;
+
+                                return (
+                                    <div
+                                        key={product.id}
+                                        className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col hover:border-indigo-500/50 transition-all hover:-translate-y-1 group shadow-xl"
+                                    >
+                                        <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                                            <div className="space-y-3">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">
+                                                        {product.category?.name || 'Paket Jasa'}
+                                                    </span>
+                                                    {product.badge && (
+                                                        <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white font-mono text-[9px] font-black uppercase">
+                                                            {product.badge}
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                                    {product.name}
+                                                </h3>
+
+                                                <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed font-normal">
+                                                    {product.description}
+                                                </p>
+                                            </div>
+
+                                            {/* Package list preview */}
+                                            <div className="space-y-2 pt-3 border-t border-slate-800/80">
+                                                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pilihan Varian Paket:</p>
+                                                {product.packages && product.packages.slice(0, 2).map((pkg) => (
+                                                    <div key={pkg.id} className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between text-xs">
+                                                        <div className="truncate pr-2">
+                                                            <p className="font-semibold text-slate-200 truncate">{pkg.name}</p>
+                                                            <p className="text-[10px] text-slate-400 font-mono">Estimasi: {pkg.duration_days} Hari</p>
+                                                        </div>
+                                                        <span className="font-extrabold text-cyan-400 shrink-0">{formatIDR(pkg.price)}</span>
+                                                    </div>
+                                                ))}
+                                                {packageCount > 2 && (
+                                                    <p className="text-[10px] text-slate-400 font-medium text-center pt-1">+ {packageCount - 2} varian paket lainnya</p>
                                                 )}
                                             </div>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <>
-                                {/* Slide 1 — AI & Design */}
-                                <div className={`absolute inset-0 bg-gradient-to-br from-indigo-700 via-violet-700 to-purple-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-                                    <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
-                                    <div className="max-w-md text-white space-y-4 relative z-10">
-                                        <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Garansi Penuh 100%</span>
-                                        <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Canva Pro, Spotify & Netflix Murah</h2>
-                                        <p className="text-white/80 text-xs md:text-sm">Akses aplikasi premium legal dengan harga termurah dan proses pengiriman akses cepat.</p>
-                                        <Link href={route('katalog')} className="px-5 py-2 bg-white text-indigo-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Beli Sekarang</Link>
-                                    </div>
-                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
-                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Canva Pro.png" alt="Canva" className="w-full h-full object-contain rounded-xl" />
                                         </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/1. ChatGpt.png" alt="ChatGPT" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/2. Claude.jpg" alt="Claude" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/3. Midjourney.png" alt="Midjourney" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/capcut pro.png" alt="CapCut" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/figma.png" alt="Figma" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/super grok.png" alt="Super Grok" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                    </div>
-                                </div>
 
-                                {/* Slide 2 — Streaming & Entertainment */}
-                                <div className={`absolute inset-0 bg-gradient-to-br from-sky-700 via-blue-800 to-indigo-900 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="absolute -top-16 -right-16 w-64 h-64 bg-sky-400/10 rounded-full blur-3xl" />
-                                    <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
-                                    <div className="max-w-md text-white space-y-4 relative z-10">
-                                        <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Layanan Instan</span>
-                                        <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Proses Cepat Kurang Dari 10 Menit</h2>
-                                        <p className="text-white/80 text-xs md:text-sm">Setelah pembayaran diverifikasi, kredensial akun premium langsung terkirim ke dashboard Anda.</p>
-                                        <Link href={route('katalog')} className="px-5 py-2 bg-white text-sky-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Lihat Katalog</Link>
-                                    </div>
-                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
-                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/4. Youtube Premium.webp" alt="YouTube" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/6. Netflix.png" alt="Netflix" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg" alt="Disney+" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/HBO Max.jpg" alt="HBO Max" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/vidio.jpg" alt="Vidio" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/viu.webp" alt="Viu" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Dramaboc.png" alt="Dramabox" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Slide 3 — Payment & More */}
-                                <div className={`absolute inset-0 bg-gradient-to-br from-emerald-600 via-teal-700 to-cyan-800 flex items-center justify-between p-8 md:p-16 transition-opacity duration-1000 ${activeBanner === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
-                                    <div className="absolute -top-20 -right-20 w-72 h-72 bg-emerald-400/10 rounded-full blur-3xl" />
-                                    <div className="absolute -bottom-28 -left-28 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl" />
-                                    <div className="max-w-md text-white space-y-4 relative z-10">
-                                        <span className="px-3 py-1 bg-white/20 border border-white/35 rounded-full text-[10px] uppercase font-bold tracking-wider">Metode Transfer</span>
-                                        <h2 className="text-2xl md:text-4xl font-extrabold leading-tight">Transfer Bank & QRIS E-Wallet Lengkap</h2>
-                                        <p className="text-white/80 text-xs md:text-sm">Kemudahan pembayaran menggunakan transfer manual BCA, Mandiri, Gopay, OVO, Dana, LinkAja.</p>
-                                        <Link href={route('cara-pemesanan')} className="px-5 py-2 bg-white text-emerald-900 text-xs font-bold rounded-full hover:bg-slate-100 shadow-lg inline-block">Cara Bayar</Link>
-                                    </div>
-                                    {/* Neat Grid Logos Showcase (4x2 Large Rounded Grid) */}
-                                    <div className="hidden md:grid grid-cols-4 gap-3 md:gap-4 p-4 md:p-5 bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl shadow-2xl shrink-0">
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/1. ChatGpt.png" alt="ChatGPT" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Canva Pro.png" alt="Canva" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/4. Youtube Premium.webp" alt="YouTube" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/6. Netflix.png" alt="Netflix" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/Spotify_App_Logo.jpg" alt="Spotify" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/2. Claude.jpg" alt="Claude" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/capcut pro.png" alt="CapCut" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                        <div className="w-16 h-16 md:w-20 md:h-20 bg-white/20 backdrop-blur-md border border-white/30 rounded-2xl p-2.5 flex items-center justify-center shadow-lg hover:scale-105 transition-transform overflow-hidden">
-                                            <img src="/image/Logo Aplikasi/HBO Max.jpg" alt="HBO Max" className="w-full h-full object-contain rounded-xl" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-
-                        {/* Slide Dots */}
-                        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
-                            {Array.from({ length: bannerCount }).map((_, idx) => (
-                                <button
-                                    key={idx}
-                                    onClick={() => setActiveBanner(idx)}
-                                    className={`w-2.5 h-2.5 rounded-full transition-all ${activeBanner === idx ? 'bg-white w-6' : 'bg-white/40'
-                                        }`}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Horizontal Category Icons Bar */}
-            <section className="bg-white py-6 border-b border-slate-200">
-                <div className="max-w-7xl mx-auto px-4 md:px-8">
-                    <div className="flex justify-center items-center gap-6 md:gap-12 flex-wrap">
-                        <div
-                            onClick={() => handleCategoryFilter(null)}
-                            className="flex flex-col items-center gap-2.5 cursor-pointer group text-center shrink-0"
-                        >
-                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${!selectedCategory
-                                ? 'bg-indigo-50 border-indigo-600 shadow-md'
-                                : 'bg-slate-50 border-slate-100 hover:border-slate-300'
-                                }`}>
-                                <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </div>
-                            <span className="text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">Semua</span>
-                        </div>
-
-                        {categories.map((cat) => {
-                            const isSelected = selectedCategory === cat.slug;
-                            return (
-                                <div
-                                    key={cat.id}
-                                    onClick={() => handleCategoryFilter(cat.slug)}
-                                    className="flex flex-col items-center gap-2.5 cursor-pointer group text-center shrink-0"
-                                >
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all ${isSelected
-                                        ? 'bg-indigo-50 border-indigo-600 shadow-md'
-                                        : 'bg-slate-50 border-slate-100 hover:border-slate-300'
-                                        }`}>
-                                        {getCategoryIcon(cat.slug)}
-                                    </div>
-                                    <span className="text-[11px] font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{cat.name}</span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </section>
-
-            {/* Dynamic Content Body */}
-            <main className="max-w-7xl mx-auto w-full px-4 md:px-8 py-8 space-y-12">
-
-                {/* SECTION 1: Terbaru Untukmu */}
-                <div>
-                    <div className="flex justify-between items-center mb-6">
-                        <div>
-                            <h3 className="text-base font-extrabold text-[#0B2545]">
-                                {selectedCategory ? `Katalog: ${categories.find(c => c.slug === selectedCategory)?.name}` : 'Terbaru Untukmu'}
-                            </h3>
-                            <div className="w-12 h-1 bg-indigo-600 rounded-full mt-1.5" />
-                        </div>
-                        <Link href={route('katalog')} className="text-xs text-indigo-600 font-bold hover:text-indigo-850">
-                            Lihat Semua
-                        </Link>
-                    </div>
-
-                    {products.length === 0 ? (
-                        <div className="text-center py-16 text-slate-400 bg-white border border-slate-200 rounded-3xl">
-                            <p className="text-sm font-bold">Produk premium tidak ditemukan.</p>
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-                            {(selectedCategory ? products : generalProducts).map((product) => {
-                                const isWished = wishlist.includes(product.id);
-                                return (
-                                    <div
-                                        key={product.id}
-                                        className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between hover:shadow-lg transition-all group relative overflow-hidden shadow-sm"
-                                    >
-                                        <button
-                                            onClick={(e) => toggleWishlist(product.id, e)}
-                                            className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
-                                        >
-                                            <svg className="w-4 h-4" fill={isWished ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                            </svg>
-                                        </button>
-
-                                        <Link href={route('product.show', product.slug)} className="block">
-                                            {product.badge && (
-                                                <span className="absolute top-0 left-0 bg-rose-600 text-white text-[9px] font-black px-2.5 py-1 rounded-br-xl shadow-sm z-10 uppercase">
-                                                    {product.badge}
-                                                </span>
-                                            )}
-
-                                            <div className="aspect-square w-full bg-slate-50 border border-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
-                                                {renderProductThumbnail(product)}
+                                        {/* Card Footer CTA */}
+                                        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between gap-3">
+                                            <div>
+                                                <span className="text-[10px] text-slate-400 block">Mulai dari</span>
+                                                <span className="text-base font-black text-white">{formatIDR(minPrice)}</span>
                                             </div>
 
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
-                                                {product.category?.name || 'Aplikasi'}
-                                            </span>
-                                            <h4 className="font-bold text-xs text-slate-800 line-clamp-2 mt-0.5 group-hover:text-indigo-600 transition-colors">
-                                                {product.name}
-                                            </h4>
-                                        </Link>
-
-                                        <div className="border-t border-slate-100 pt-3.5 mt-3 text-left min-h-[44px]">
-                                            {product.min_original_price ? (
-                                                <span className="text-[10px] text-slate-400 line-through font-mono block">
-                                                    {formatIDR(product.min_original_price)}
-                                                </span>
-                                            ) : (
-                                                <span className="text-[10px] text-transparent select-none font-mono block">-</span>
-                                            )}
-                                            <span className="text-xs font-black text-indigo-650 font-mono block mt-0.5">{formatIDR(product.min_price)}</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
-
-                {/* SECTION: AI & Bot Populer */}
-                {!selectedCategory && aiProducts.length > 0 && (
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <div>
-                                <h3 className="text-base font-extrabold text-[#0B2545]">AI & Bot Tools Populer</h3>
-                                <div className="w-12 h-1 bg-purple-600 rounded-full mt-1.5" />
-                            </div>
-                            <Link href={route('katalog')} className="text-xs text-indigo-600 font-bold hover:text-indigo-850">
-                                Lihat Semua
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-                            {aiProducts.slice(0, 6).map((product) => {
-                                const isWished = wishlist.includes(product.id);
-                                return (
-                                    <div
-                                        key={product.id}
-                                        className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between hover:shadow-lg transition-all group relative overflow-hidden shadow-sm"
-                                    >
-                                        <button
-                                            onClick={(e) => toggleWishlist(product.id, e)}
-                                            className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
-                                        >
-                                            <svg className="w-4 h-4" fill={isWished ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                            </svg>
-                                        </button>
-
-                                        <Link href={route('product.show', product.slug)} className="block">
-                                            {product.badge && (
-                                                <span className="absolute top-0 left-0 bg-purple-600 text-white text-[9px] font-black px-2.5 py-1 rounded-br-xl shadow-sm z-10 uppercase">
-                                                    {product.badge}
-                                                </span>
-                                            )}
-
-                                            <div className="aspect-square w-full bg-slate-50 border border-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
-                                                {renderProductThumbnail(product)}
-                                            </div>
-
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
-                                                {product.category?.name || 'AI & Bot'}
-                                            </span>
-                                            <h4 className="font-bold text-xs text-slate-800 line-clamp-2 mt-0.5 group-hover:text-indigo-600 transition-colors">
-                                                {product.name}
-                                            </h4>
-                                        </Link>
-
-                                        <div className="border-t border-slate-100 pt-3.5 mt-3 text-left min-h-[44px]">
-                                            {product.min_original_price ? (
-                                                <span className="text-[10px] text-slate-400 line-through font-mono block">
-                                                    {formatIDR(product.min_original_price)}
-                                                </span>
-                                            ) : (
-                                                <span className="text-[10px] text-transparent select-none font-mono block">-</span>
-                                            )}
-                                            <span className="text-xs font-black text-indigo-650 font-mono block mt-0.5">{formatIDR(product.min_price)}</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-
-                {/* MIDDLE PROMO BANNER 1 */}
-                {!selectedCategory && (
-                    middleBanners && middleBanners[0] ? (
-                        <div className="relative rounded-3xl overflow-hidden h-[130px] md:h-[180px] shadow-sm border border-slate-200">
-                            <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[0.5px] z-10" />
-                            <img
-                                src={`/storage/${middleBanners[0].image_path}`}
-                                alt={middleBanners[0].title || 'Promo'}
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 z-20 flex flex-col justify-center p-6 md:p-12 text-white space-y-2 md:space-y-3 max-w-lg">
-                                <span className="self-start px-2 py-0.5 bg-white/20 backdrop-blur-md border border-white/30 rounded text-[9px] uppercase font-bold tracking-widest shadow-sm">
-                                    PROMO SPESIAL
-                                </span>
-                                {middleBanners[0].title && (
-                                    <h3 className="text-lg md:text-2xl font-extrabold leading-tight drop-shadow-md">
-                                        {middleBanners[0].title}
-                                    </h3>
-                                )}
-                                {middleBanners[0].subtitle && (
-                                    <p className="text-white/95 text-[10px] md:text-xs leading-relaxed max-w-sm hidden sm:block drop-shadow-sm font-medium">
-                                        {middleBanners[0].subtitle}
-                                    </p>
-                                )}
-                                {middleBanners[0].link_url && (
-                                    <div className="pt-1.5">
-                                        {middleBanners[0].link_url.startsWith('http') ? (
-                                            <a
-                                                href={middleBanners[0].link_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-4 py-1.5 bg-white text-slate-900 text-[10px] font-bold rounded-lg hover:bg-slate-100 shadow-md inline-block transition-transform hover:-translate-y-0.5"
-                                            >
-                                                Lihat Detail
-                                            </a>
-                                        ) : (
                                             <Link
-                                                href={middleBanners[0].link_url}
-                                                className="px-4 py-1.5 bg-white text-slate-900 text-[10px] font-bold rounded-lg hover:bg-slate-100 shadow-md inline-block transition-transform hover:-translate-y-0.5"
+                                                href={route('product.show', product.slug)}
+                                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:scale-105"
                                             >
-                                                Beli Sekarang
+                                                Detail Paket &rarr;
                                             </Link>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="relative rounded-3xl overflow-hidden h-[130px] md:h-[180px] bg-gradient-to-r from-emerald-600 to-teal-500 flex items-center p-6 md:p-12 shadow-sm border border-emerald-500/10">
-                            <div className="max-w-lg text-white space-y-2 md:space-y-3 z-10">
-                                <span className="text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 bg-white/20 rounded border border-white/10">Premium Design & Office</span>
-                                <h3 className="text-lg md:text-2xl font-extrabold leading-tight">Akses Canva Pro & ChatGPT Plus Murah</h3>
-                                <p className="text-white/80 text-[10px] md:text-xs leading-relaxed max-w-sm hidden sm:block">Maksimalkan produktivitas kerja dan desain grafis Anda dengan paket langganan murah terlengkap.</p>
-                            </div>
-                        </div>
-                    )
-                )}
-
-                {/* SECTION 2: Streaming Populer */}
-                {!selectedCategory && streamingProducts.length > 0 && (
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <div>
-                                <h3 className="text-base font-extrabold text-[#0B2545]">Hiburan & Streaming Populer</h3>
-                                <div className="w-12 h-1 bg-indigo-600 rounded-full mt-1.5" />
-                            </div>
-                            <Link href={route('katalog')} className="text-xs text-indigo-600 font-bold hover:text-indigo-850">
-                                Lihat Semua
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-                            {streamingProducts.slice(0, 6).map((product) => {
-                                const isWished = wishlist.includes(product.id);
-                                return (
-                                    <div
-                                        key={product.id}
-                                        className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between hover:shadow-lg transition-all group relative overflow-hidden shadow-sm"
-                                    >
-                                        <button
-                                            onClick={(e) => toggleWishlist(product.id, e)}
-                                            className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
-                                        >
-                                            <svg className="w-4 h-4" fill={isWished ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                            </svg>
-                                        </button>
-
-                                        <Link href={route('product.show', product.slug)} className="block">
-                                            {product.badge && (
-                                                <span className="absolute top-0 left-0 bg-rose-600 text-white text-[9px] font-black px-2.5 py-1 rounded-br-xl shadow-sm z-10 uppercase">
-                                                    {product.badge}
-                                                </span>
-                                            )}
-
-                                            <div className="aspect-square w-full bg-slate-50 border border-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
-                                                {renderProductThumbnail(product)}
-                                            </div>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{product.category?.name}</span>
-                                            <h4 className="font-bold text-xs text-slate-800 line-clamp-2 mt-0.5 group-hover:text-indigo-600 transition-colors">{product.name}</h4>
-                                        </Link>
-
-                                        <div className="border-t border-slate-100 pt-3.5 mt-3 text-left min-h-[44px]">
-                                            {product.min_original_price ? (
-                                                <span className="text-[10px] text-slate-400 line-through font-mono block">
-                                                    {formatIDR(product.min_original_price)}
-                                                </span>
-                                            ) : (
-                                                <span className="text-[10px] text-transparent select-none font-mono block">-</span>
-                                            )}
-                                            <span className="text-xs font-black text-indigo-650 font-mono block mt-0.5">{formatIDR(product.min_price)}</span>
                                         </div>
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
-                )}
+                </section>
 
-                {/* MIDDLE PROMO BANNER 2 */}
-                {!selectedCategory && (
-                    middleBanners && middleBanners[1] ? (
-                        <div className="relative rounded-3xl overflow-hidden h-[130px] md:h-[180px] shadow-sm border border-slate-200">
-                            <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[0.5px] z-10" />
-                            <img
-                                src={`/storage/${middleBanners[1].image_path}`}
-                                alt={middleBanners[1].title || 'Promo'}
-                                className="absolute inset-0 w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 z-20 flex flex-col justify-center p-6 md:p-12 text-white space-y-2 md:space-y-3 max-w-lg">
-                                <span className="self-start px-2 py-0.5 bg-white/20 backdrop-blur-md border border-white/30 rounded text-[9px] uppercase font-bold tracking-widest shadow-sm">
-                                    INFO PEMBAYARAN
+                {/* 5. INTERACTIVE QUICK PROJECT ESTIMATOR */}
+                <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
+                    <div className="rounded-3xl bg-gradient-to-tr from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/30 p-6 md:p-12 shadow-2xl relative overflow-hidden">
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+                            <div className="lg:col-span-6 space-y-4">
+                                <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
+                                    Simulasi Anggaran Proyek Cepat
                                 </span>
-                                {middleBanners[1].title && (
-                                    <h3 className="text-lg md:text-2xl font-extrabold leading-tight drop-shadow-md">
-                                        {middleBanners[1].title}
-                                    </h3>
-                                )}
-                                {middleBanners[1].subtitle && (
-                                    <p className="text-white/95 text-[10px] md:text-xs leading-relaxed max-w-sm hidden sm:block drop-shadow-sm font-medium">
-                                        {middleBanners[1].subtitle}
-                                    </p>
-                                )}
-                                {middleBanners[1].link_url && (
-                                    <div className="pt-1.5">
-                                        {middleBanners[1].link_url.startsWith('http') ? (
-                                            <a
-                                                href={middleBanners[1].link_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-4 py-1.5 bg-white text-slate-900 text-[10px] font-bold rounded-lg hover:bg-slate-100 shadow-md inline-block transition-transform hover:-translate-y-0.5"
-                                            >
-                                                Lihat Detail
-                                            </a>
-                                        ) : (
-                                            <Link
-                                                href={middleBanners[1].link_url}
-                                                className="px-4 py-1.5 bg-white text-slate-900 text-[10px] font-bold rounded-lg hover:bg-slate-100 shadow-md inline-block transition-transform hover:-translate-y-0.5"
-                                            >
-                                                Info Selengkapnya
-                                            </Link>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="relative rounded-3xl overflow-hidden h-[130px] md:h-[180px] bg-gradient-to-r from-violet-600 to-indigo-700 flex items-center p-6 md:p-12 shadow-sm border border-violet-500/10">
-                            <div className="max-w-lg text-white space-y-2 md:space-y-3 z-10">
-                                <span className="text-[9px] uppercase font-bold tracking-widest px-2 py-0.5 bg-white/20 rounded border border-white/10">Metode Pembayaran Transfer</span>
-                                <h3 className="text-lg md:text-2xl font-extrabold leading-tight">Pembayaran Mudah & Terverifikasi Manual</h3>
-                                <p className="text-white/80 text-[10px] md:text-xs leading-relaxed max-w-sm hidden sm:block">Gunakan transfer manual antar rekening bank lokal dan e-wallet QRIS terlengkap untuk melakukan transaksi instan.</p>
-                            </div>
-                        </div>
-                    )
-                )}
-
-                {/* SECTION 3: Kategori Design/Productivity */}
-                {!selectedCategory && designProducts.length > 0 && (
-                    <div>
-                        <div className="flex justify-between items-center mb-6">
-                            <div>
-                                <h3 className="text-base font-extrabold text-[#0B2545]">Produktivitas & Desain</h3>
-                                <div className="w-12 h-1 bg-indigo-600 rounded-full mt-1.5" />
-                            </div>
-                            <Link href={route('katalog')} className="text-xs text-indigo-600 font-bold hover:text-indigo-850">
-                                Lihat Semua
-                            </Link>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-5">
-                            {designProducts.slice(0, 6).map((product) => {
-                                const isWished = wishlist.includes(product.id);
-                                return (
-                                    <div
-                                        key={product.id}
-                                        className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between hover:shadow-lg transition-all group relative overflow-hidden shadow-sm"
-                                    >
-                                        <button
-                                            onClick={(e) => toggleWishlist(product.id, e)}
-                                            className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
-                                        >
-                                            <svg className="w-4 h-4" fill={isWished ? "currentColor" : "none"} viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                            </svg>
-                                        </button>
-
-                                        <Link href={route('product.show', product.slug)} className="block">
-                                            {product.badge && (
-                                                <span className="absolute top-0 left-0 bg-rose-600 text-white text-[9px] font-black px-2.5 py-1 rounded-br-xl shadow-sm z-10 uppercase">
-                                                    {product.badge}
-                                                </span>
-                                            )}
-
-                                            <div className="aspect-square w-full bg-slate-50 border border-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
-                                                {renderProductThumbnail(product)}
-                                            </div>
-                                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">{product.category?.name}</span>
-                                            <h4 className="font-bold text-xs text-slate-800 line-clamp-2 mt-0.5 group-hover:text-indigo-600 transition-colors">{product.name}</h4>
-                                        </Link>
-
-                                        <div className="border-t border-slate-100 pt-3.5 mt-3 text-left min-h-[44px]">
-                                            {product.min_original_price ? (
-                                                <span className="text-[10px] text-slate-400 line-through font-mono block">
-                                                    {formatIDR(product.min_original_price)}
-                                                </span>
-                                            ) : (
-                                                <span className="text-[10px] text-transparent select-none font-mono block">-</span>
-                                            )}
-                                            <span className="text-xs font-black text-indigo-650 font-mono block mt-0.5">{formatIDR(product.min_price)}</span>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-
-                {/* SECTION 4: Jasa Pembuatan Aplikasi Banner */}
-                {!selectedCategory && (
-                    <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#0B2545] via-[#13315C] to-[#1F4E79] text-white p-8 md:p-12 shadow-xl border border-indigo-500/20">
-                        <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="space-y-3 text-center md:text-left max-w-2xl">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-400 text-[#0B2545] font-black text-[10px] rounded-full uppercase tracking-wider">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#0B2545] animate-ping" />
-                                    Software House & Service
-                                </span>
-                                <h3 className="text-xl md:text-3xl font-extrabold leading-tight text-white">
-                                    Ingin Buat Website, Mobile App atau Sistem Informasi Custom?
-                                </h3>
-                                <p className="text-slate-300 text-xs md:text-sm font-medium leading-relaxed">
-                                    Kami juga melayani jasa pembuatan aplikasi website (Laravel/React), aplikasi mobile (Android/iOS), UI/UX Figma, hingga data analyst Tableau & Python dengan garansi penuh.
+                                <h2 className="text-2xl sm:text-4xl font-black text-white">Kalkulator Estimasi Biaya Pembuatan Application</h2>
+                                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                                    Hitung perkiraan biaya proyek website atau aplikasi Android Anda secara instan. Pilih platform dan fitur yang Anda butuhkan di samping.
                                 </p>
-                            </div>
-                            <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
-                                <Link
-                                    href={route('jasa-pembuatan')}
-                                    className="px-6 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-[#0B2545] font-black text-xs md:text-sm rounded-xl shadow-lg text-center transition-transform hover:-translate-y-0.5"
-                                >
-                                    Lihat Portofolio & Jasa
-                                </Link>
+
+                                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2">
+                                    <div className="flex items-center justify-between text-xs">
+                                        <span className="text-slate-400">Estimasi Total Biaya:</span>
+                                        <span className="text-2xl font-black text-cyan-400">{formatIDR(calculateEstimatedPrice())}</span>
+                                    </div>
+                                    <p className="text-[10px] text-slate-400 font-mono">
+                                        *Harga bersifat estimasi awal dan dapat disesuaikan dengan brief final Anda.
+                                    </p>
+                                </div>
+
                                 <a
-                                    href={`https://wa.me/${settings?.whatsapp_number || '628123456789'}?text=${encodeURIComponent('Halo, saya ingin konsultasi Jasa Pembuatan Aplikasi Website/Mobile.')}`}
+                                    href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(`Halo Prayoga Tech, saya telah melakukan kalkulasi estimasi di website:\n- Platform: ${estPlatform}\n- Jenis: ${estCategory}\n- Estimasi Biaya: ${formatIDR(calculateEstimatedPrice())}\n\nSaya ingin konsultasi lebih lanjut.`)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs md:text-sm rounded-xl shadow-lg text-center flex items-center justify-center gap-2 transition-transform hover:-translate-y-0.5"
+                                    className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs rounded-xl shadow-lg transition-all inline-flex items-center justify-center gap-2"
                                 >
-                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.489.002 9.961-4.47 9.964-9.964.002-2.661-1.033-5.161-2.915-7.044C16.438 1.713 13.935.672 12 1.72c-2.661 0-5.162 1.033-7.045 2.915C3.072 6.518 2.03 9.02 2.03 11.68c-.002 1.729.547 3.42 1.587 4.908l-.997 3.642 3.72-.975z" />
-                                    </svg>
-                                    Konsultasi WhatsApp
+                                    Pesan Sesuai Estimasi Ini via WhatsApp &rarr;
                                 </a>
+                            </div>
+
+                            {/* Estimator Options Form */}
+                            <div className="lg:col-span-6 bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-5">
+                                {/* Option 1: Platform */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-300 block">1. Pilih Platform Target:</label>
+                                    <div className="grid grid-cols-3 gap-2">
+                                        {[
+                                            { id: 'web', label: 'Website Dev' },
+                                            { id: 'android', label: 'Aplikasi Android' },
+                                            { id: 'bundle', label: 'Web + Android' },
+                                        ].map((p) => (
+                                            <button
+                                                key={p.id}
+                                                type="button"
+                                                onClick={() => setEstPlatform(p.id)}
+                                                className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all ${estPlatform === p.id
+                                                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                                                        : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                                                    }`}
+                                            >
+                                                {p.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Option 2: Category */}
+                                {estPlatform === 'web' && (
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-slate-300 block">2. Tipe Website:</label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {[
+                                                { id: 'company', label: 'Company Profile' },
+                                                { id: 'shop', label: 'Toko Online' },
+                                                { id: 'system', label: 'System Custom' },
+                                            ].map((c) => (
+                                                <button
+                                                    key={c.id}
+                                                    type="button"
+                                                    onClick={() => setEstCategory(c.id)}
+                                                    className={`py-2 px-3 text-[11px] font-bold rounded-xl border transition-all ${estCategory === c.id
+                                                            ? 'bg-cyan-600 text-white border-cyan-500 shadow-md'
+                                                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                                                        }`}
+                                                >
+                                                    {c.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Option 3: Additional Features */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold text-slate-300 block">3. Modul & Fitur Tambahan:</label>
+                                    <div className="grid grid-cols-2 gap-2 text-xs">
+                                        {[
+                                            { key: 'payment', label: 'Payment Gateway (Midtrans)' },
+                                            { key: 'notification', label: 'Push Notification / WA API' },
+                                            { key: 'multilang', label: 'Multi Language System' },
+                                            { key: 'playstore', label: 'Upload Google Play Store' },
+                                        ].map((f) => (
+                                            <label
+                                                key={f.key}
+                                                className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${estFeatures[f.key]
+                                                        ? 'bg-indigo-950/80 border-indigo-500/60 text-white'
+                                                        : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
+                                                    }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={estFeatures[f.key]}
+                                                    onChange={(e) => setEstFeatures({ ...estFeatures, [f.key]: e.target.checked })}
+                                                    className="rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-0"
+                                                />
+                                                <span className="text-[11px] font-medium leading-snug">{f.label}</span>
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                )}
-            </main>
+                </section>
+
+                {/* 6. FEATURED PORTFOLIO SHOWCASE */}
+                <section className="py-16 bg-slate-900/40 border-t border-slate-800/80 px-4 md:px-8">
+                    <div className="max-w-7xl mx-auto space-y-10">
+                        <div className="text-center space-y-2">
+                            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Bukti Hasil Kerja</span>
+                            <h2 className="text-2xl sm:text-4xl font-black text-white">Portofolio Proyek Pilihan</h2>
+                            <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+                                Beberapa hasil pengerjaan website dan aplikasi mobile yang telah dipercaya oleh para klien kami.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {portfolioShowcase.map((item, index) => (
+                                <div key={index} className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-indigo-500/50 transition-all hover:-translate-y-1 group">
+                                    <div className="h-48 bg-slate-950 overflow-hidden relative">
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            onError={(e) => {
+                                                e.target.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80';
+                                            }}
+                                        />
+                                        <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-800 text-cyan-300 text-[10px] font-bold px-3 py-1 rounded-full">
+                                            {item.type}
+                                        </div>
+                                    </div>
+
+                                    <div className="p-5 space-y-3">
+                                        <h3 className="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                            {item.title}
+                                        </h3>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {item.tech.map((t, i) => (
+                                                <span key={i} className="text-[9px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400">
+                                                    {t}
+                                                </span>
+                                            ))}
+                                        </div>
+                                        {item.link && (
+                                            <a
+                                                href={item.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-xs text-indigo-400 font-bold hover:underline inline-flex items-center gap-1 pt-1"
+                                            >
+                                                Kunjungi Demo Live &rarr;
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="text-center pt-4">
+                            <Link
+                                href={route('jasa-pembuatan')}
+                                className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all"
+                            >
+                                Lihat Portofolio & Sistem Portofolio Lengkap &rarr;
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+                {/* 7. WORKFLOW / STEP-BY-STEP PEMESANAN */}
+                <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
+                    <div className="text-center space-y-3 mb-12">
+                        <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Alur Pengerjaan Sederhana</span>
+                        <h2 className="text-2xl sm:text-4xl font-black text-white">6 Langkah Mudah Membuat Aplikasi Anda</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+                        {[
+                            { step: '01', title: 'Konsultasi Brief', desc: 'Diskusi kebutuhan fitur, konsep warna, & modul aplikasi.' },
+                            { step: '02', title: 'Pilih Paket', desc: 'Pilih varian paket website/android & estimasi waktu.' },
+                            { step: '03', title: 'DP / Pembayaran', desc: 'Pembayaran aman via Transfer Bank / QRIS resmi.' },
+                            { step: '04', title: 'Pengerjaan', desc: 'Pengembangan kode oleh tim developer berpengalaman.' },
+                            { step: '05', title: 'Testing & Demo', desc: 'Review demo live aplikasi & revisi fitur.' },
+                            { step: '06', title: 'Serah Terima', desc: 'Penyerahan Source Code, Domain, & Publish Play Store.' },
+                        ].map((s, idx) => (
+                            <div key={idx} className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 relative">
+                                <span className="font-mono text-2xl font-black text-indigo-500/40 block">{s.step}</span>
+                                <h3 className="text-xs font-bold text-white">{s.title}</h3>
+                                <p className="text-[11px] text-slate-400 leading-relaxed font-normal">{s.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* 8. CALL TO ACTION BANNER */}
+                <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
+                    <div className="rounded-3xl bg-gradient-to-r from-indigo-900 via-indigo-800 to-cyan-900 p-8 md:p-14 text-center space-y-6 shadow-2xl relative overflow-hidden">
+                        <h2 className="text-2xl sm:text-4xl font-black text-white max-w-2xl mx-auto leading-tight">
+                            Siap Mengembangkan Aplikasi Website & Android Usaha Anda?
+                        </h2>
+                        <p className="text-indigo-100 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+                            Konsultasikan ide aplikasi Anda sekarang juga secara gratis. Tim konsultan software house kami siap membantu merealisasikan impian digital Anda.
+                        </p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                            <a
+                                href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Halo Prayoga Tech, saya ingin diskusi ide pembuatan aplikasi.')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-2xl shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+                            >
+                                Diskusi Proyek via WhatsApp &rarr;
+                            </a>
+                            <Link
+                                href={route('katalog')}
+                                className="px-8 py-3.5 bg-slate-900/80 hover:bg-slate-900 text-white font-extrabold text-xs rounded-2xl border border-white/20 transition-all"
+                            >
+                                Eksplor Katalog Paket Jasa
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
         </BuyerLayout>
     );
 }

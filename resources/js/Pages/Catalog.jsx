@@ -1,152 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import BuyerLayout from '@/Layouts/BuyerLayout';
 
-export default function Catalog({ products, categories, filters }) {
+export default function Catalog({ auth, products = [], categories = [], filters = {} }) {
     const [search, setSearch] = useState(filters.search || '');
-    const [selectedCats, setSelectedCats] = useState(filters.categories || []);
+    const [selectedCategories, setSelectedCategories] = useState(filters.categories || []);
     const [minPrice, setMinPrice] = useState(filters.min_price || '');
     const [maxPrice, setMaxPrice] = useState(filters.max_price || '');
     const [sort, setSort] = useState(filters.sort || 'name_asc');
-    const [wishlist, setWishlist] = useState([]);
 
-    useEffect(() => {
-        const storedWishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        setWishlist(storedWishlist);
-    }, []);
-
-    const toggleWishlist = (productId, e) => {
-        e.preventDefault();
-        let updatedWishlist = [...wishlist];
-        if (updatedWishlist.includes(productId)) {
-            updatedWishlist = updatedWishlist.filter(id => id !== productId);
+    const handleCategoryToggle = (categoryId) => {
+        let updated = [...selectedCategories];
+        if (updated.includes(categoryId)) {
+            updated = updated.filter(id => id !== categoryId);
         } else {
-            updatedWishlist.push(productId);
+            updated.push(categoryId);
         }
-        localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
-        setWishlist(updatedWishlist);
-
-        // Dispatch event so layout updates its badge counts
-        window.dispatchEvent(new Event('wishlist-updated'));
+        setSelectedCategories(updated);
+        applyFilters({ categories: updated });
     };
 
-    const handleCategoryChange = (catId) => {
-        let updated = [...selectedCats];
-        if (updated.includes(catId.toString())) {
-            updated = updated.filter(id => id !== catId.toString());
-        } else {
-            updated.push(catId.toString());
-        }
-        setSelectedCats(updated);
-    };
+    const applyFilters = (overrides = {}) => {
+        const queryParams = {
+            search: overrides.search !== undefined ? overrides.search : search,
+            categories: overrides.categories !== undefined ? overrides.categories : selectedCategories,
+            min_price: overrides.min_price !== undefined ? overrides.min_price : minPrice,
+            max_price: overrides.max_price !== undefined ? overrides.max_price : maxPrice,
+            sort: overrides.sort !== undefined ? overrides.sort : sort,
+        };
 
-    const handleApplyFilters = (e) => {
-        e?.preventDefault();
-        router.get(route('katalog'), {
-            search: search || undefined,
-            categories: selectedCats.length > 0 ? selectedCats : undefined,
-            min_price: minPrice || undefined,
-            max_price: maxPrice || undefined,
-            sort: sort || undefined,
+        // Filter out empty params
+        Object.keys(queryParams).forEach(key => {
+            if (!queryParams[key] || (Array.isArray(queryParams[key]) && queryParams[key].length === 0)) {
+                delete queryParams[key];
+            }
         });
+
+        router.get(route('katalog'), queryParams, { preserveState: true, replace: true });
     };
 
-    const handleResetFilters = () => {
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        applyFilters();
+    };
+
+    const resetFilters = () => {
         setSearch('');
-        setSelectedCats([]);
+        setSelectedCategories([]);
         setMinPrice('');
-        maxPrice('');
+        setMaxPrice('');
         setSort('name_asc');
-        router.get(route('katalog'));
-    };
-
-    const getLogoPath = (productName) => {
-        if (!productName) return null;
-        const nameLower = productName.toLowerCase();
-        if (nameLower.includes("canva")) return "/image/Logo Aplikasi/Canva Pro.png";
-        if (nameLower.includes("chatgpt") || nameLower.includes("gpt")) return "/image/Logo Aplikasi/1. ChatGpt.png";
-        if (nameLower.includes("claude")) return "/image/Logo Aplikasi/2. Claude.jpg";
-        if (nameLower.includes("midjourney")) return "/image/Logo Aplikasi/3. Midjourney.png";
-        if (nameLower.includes("youtube")) return "/image/Logo Aplikasi/4. Youtube Premium.webp";
-        if (nameLower.includes("disney")) return "/image/Logo Aplikasi/disney-plus-logo-button-replacement-1712328257121.jpg";
-        if (nameLower.includes("netflix")) return "/image/Logo Aplikasi/6. Netflix.png";
-        if (nameLower.includes("spotify")) return "/image/Logo Aplikasi/Spotify_App_Logo.jpg";
-        if (nameLower.includes("capcut")) return "/image/Logo Aplikasi/capcut pro.png";
-        if (nameLower.includes("figma")) return "/image/Logo Aplikasi/figma.webp";
-        if (nameLower.includes("hbo")) return "/image/Logo Aplikasi/HBO Max.jpg";
-        if (nameLower.includes("vidio")) return "/image/Logo Aplikasi/vidio.jpg";
-        if (nameLower.includes("viu")) return "/image/Logo Aplikasi/viu.webp";
-        if (nameLower.includes("dramabox") || nameLower.includes("drama")) return "/image/Logo Aplikasi/Dramaboc.png";
-        if (nameLower.includes("grok")) return "/image/Logo Aplikasi/super grok.png";
-        if (nameLower.includes("bstation") || nameLower.includes("bilibili")) return "/image/Logo Aplikasi/bstation.png";
-        if (nameLower.includes("iqiyi")) return "/image/Logo Aplikasi/iQIYI.jpg";
-        return null;
-    };
-
-    const renderProductThumbnail = (product) => {
-        if (product.image_path) {
-            return (
-                <img
-                    src={`/storage/${product.image_path}`}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-            );
-        }
-
-        const logoFile = getLogoPath(product.name);
-        if (logoFile) {
-            return (
-                <div className="w-full h-full bg-slate-900/90 p-4 flex items-center justify-center group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/80 via-slate-900 to-slate-950 opacity-95" />
-                    <img src={logoFile} alt={product.name} className="w-16 h-16 object-contain relative z-10 drop-shadow-md" />
-                </div>
-            );
-        }
-
-        const nameLower = product.name?.toLowerCase() || '';
-        let bgGradient = "from-[#0B2545] to-[#1F4E79]";
-        let textColor = "text-white";
-
-        if (nameLower.includes("netflix")) {
-            bgGradient = "from-red-950 via-slate-900 to-red-900";
-            textColor = "text-red-500";
-        } else if (nameLower.includes("spotify")) {
-            bgGradient = "from-emerald-950 via-slate-900 to-emerald-900";
-            textColor = "text-emerald-400";
-        } else if (nameLower.includes("canva")) {
-            bgGradient = "from-cyan-900 via-teal-900 to-indigo-900";
-            textColor = "text-cyan-300";
-        } else if (nameLower.includes("chatgpt") || nameLower.includes("claude") || nameLower.includes("ai")) {
-            bgGradient = "from-purple-950 via-indigo-900 to-violet-950";
-            textColor = "text-amber-300";
-        } else if (nameLower.includes("disney")) {
-            bgGradient = "from-sky-950 via-indigo-950 to-blue-900";
-            textColor = "text-sky-300";
-        } else if (nameLower.includes("youtube")) {
-            bgGradient = "from-red-900 via-rose-950 to-slate-900";
-            textColor = "text-red-500";
-        } else if (nameLower.includes("microsoft") || nameLower.includes("office")) {
-            bgGradient = "from-amber-900 via-rose-950 to-[#0B2545]";
-            textColor = "text-amber-400";
-        } else if (nameLower.includes("discord")) {
-            bgGradient = "from-indigo-950 via-purple-900 to-slate-900";
-            textColor = "text-indigo-400";
-        } else if (nameLower.includes("zoom")) {
-            bgGradient = "from-sky-900 via-blue-950 to-slate-900";
-            textColor = "text-sky-400";
-        }
-
-        return (
-            <div className={`w-full h-full bg-gradient-to-br ${bgGradient} flex flex-col items-center justify-center p-3 text-center group-hover:scale-105 transition-transform duration-300`}>
-                <span className={`text-lg font-black tracking-wider ${textColor}`}>
-                    {product.name.substring(0, 3).toUpperCase()}
-                </span>
-                <span className="text-[9px] font-bold text-white/60 uppercase tracking-widest mt-1 line-clamp-1">
-                    {product.name}
-                </span>
-            </div>
-        );
+        router.get(route('katalog'), {}, { replace: true });
     };
 
     const formatIDR = (value) => {
@@ -160,182 +64,199 @@ export default function Catalog({ products, categories, filters }) {
 
     return (
         <BuyerLayout>
-            <Head title="Katalog Lengkap Aplikasi & Akun Premium" />
+            <Head title="Katalog Paket Jasa Pembuatan Website & Android - Prayoga Tech" />
 
-            <main className="max-w-7xl mx-auto w-full px-4 md:px-8 py-8">
-                {/* Catalog Title */}
-                <div className="mb-8 border-b border-slate-200 pb-5">
-                    <h1 className="text-2xl font-black text-[#0B2545]">Katalog Aplikasi Premium</h1>
-                    <p className="text-xs text-slate-500 mt-1.5 font-medium">Temukan seluruh varian lisensi dan paket aplikasi streaming, desain grafis, dan produktivitas terlengkap.</p>
-                </div>
+            <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    
+                    {/* Catalog Header */}
+                    <div className="text-center space-y-2">
+                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Katalog Paket Jasa</span>
+                        <h1 className="text-3xl sm:text-4xl font-black text-white">Layanan Pembuatan Aplikasi Website & Android</h1>
+                        <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+                            Pilih varian paket layanan pengembangan software house sesuai skala proyek dan anggaran Anda.
+                        </p>
+                    </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-
-                    {/* Left Sidebar Filter Section */}
-                    <div className="space-y-6">
-                        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-6">
-
-                            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
-                                <h3 className="font-bold text-xs text-slate-800 uppercase tracking-wider">Filter Pencarian</h3>
-                                <button onClick={handleResetFilters} className="text-[10px] text-rose-600 font-bold hover:underline">
-                                    Reset
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        
+                        {/* Sidebar Filters */}
+                        <div className="lg:col-span-3 bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6">
+                            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                    </svg>
+                                    Filter Layanan
+                                </h3>
+                                <button
+                                    onClick={resetFilters}
+                                    className="text-[10px] text-slate-400 hover:text-cyan-400 font-bold uppercase transition-colors"
+                                >
+                                    Reset All
                                 </button>
                             </div>
 
-                            {/* Search */}
-                            <div className="space-y-2">
-                                <label className="block text-[10px] font-bold uppercase text-slate-500 tracking-wider">Kata Kunci</label>
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Cari nama aplikasi..."
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20"
-                                />
-                            </div>
+                            {/* Search Filter */}
+                            <form onSubmit={handleSearchSubmit} className="space-y-2">
+                                <label className="text-xs font-bold text-slate-300 block">Cari Kata Kunci:</label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Misal: Website, E-Commerce, Android..."
+                                        className="w-full bg-slate-950 border border-slate-800 text-xs text-white rounded-xl px-3.5 py-2.5 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                    />
+                                    <button
+                                        type="submit"
+                                        className="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold rounded-lg transition-colors"
+                                    >
+                                        Cari
+                                    </button>
+                                </div>
+                            </form>
 
-                            {/* Categories */}
+                            {/* Category Filter */}
                             <div className="space-y-3">
-                                <label className="block text-[10px] font-bold uppercase text-slate-500 tracking-wider">Kategori</label>
-                                <div className="space-y-2.5">
-                                    {categories.map((cat) => (
-                                        <label key={cat.id} className="flex items-center gap-2.5 text-xs text-slate-600 cursor-pointer font-medium hover:text-slate-900">
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedCats.includes(cat.id.toString())}
-                                                onChange={() => handleCategoryChange(cat.id)}
-                                                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 w-4 h-4"
-                                            />
-                                            {cat.name}
-                                        </label>
-                                    ))}
+                                <label className="text-xs font-bold text-slate-300 block">Kategori Jasa:</label>
+                                <div className="space-y-2">
+                                    {categories.map((cat) => {
+                                        const isSelected = selectedCategories.includes(cat.id);
+                                        return (
+                                            <label
+                                                key={cat.id}
+                                                className={`flex items-center gap-2.5 text-xs p-2.5 rounded-xl border cursor-pointer transition-all ${
+                                                    isSelected 
+                                                        ? 'bg-indigo-950/70 border-indigo-500/60 text-white font-bold' 
+                                                        : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:text-white'
+                                                }`}
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isSelected}
+                                                    onChange={() => handleCategoryToggle(cat.id)}
+                                                    className="rounded bg-slate-900 border-slate-700 text-indigo-600 focus:ring-0"
+                                                />
+                                                <span className="truncate">{cat.name}</span>
+                                            </label>
+                                        );
+                                    })}
                                 </div>
                             </div>
 
-                            {/* Price range */}
-                            <div className="space-y-3">
-                                <label className="block text-[10px] font-bold uppercase text-slate-500 tracking-wider">Rentang Harga (Rp)</label>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <input
-                                        type="number"
-                                        value={minPrice}
-                                        onChange={(e) => setMinPrice(e.target.value)}
-                                        placeholder="Min"
-                                        className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-800 text-xs focus:outline-none focus:border-indigo-500"
-                                    />
-                                    <input
-                                        type="number"
-                                        value={maxPrice}
-                                        onChange={(e) => setMaxPrice(e.target.value)}
-                                        placeholder="Maks"
-                                        className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-800 text-xs focus:outline-none focus:border-indigo-500"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Sort */}
+                            {/* Sorting */}
                             <div className="space-y-2">
-                                <label className="block text-[10px] font-bold uppercase text-slate-500 tracking-wider">Urutkan</label>
+                                <label className="text-xs font-bold text-slate-300 block">Urutkan Harga:</label>
                                 <select
                                     value={sort}
-                                    onChange={(e) => setSort(e.target.value)}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 text-xs focus:outline-none focus:border-indigo-500"
+                                    onChange={(e) => {
+                                        setSort(e.target.value);
+                                        applyFilters({ sort: e.target.value });
+                                    }}
+                                    className="w-full bg-slate-950 border border-slate-800 text-xs text-slate-200 rounded-xl px-3 py-2.5 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
                                 >
-                                    <option value="name_asc">Nama A-Z</option>
-                                    <option value="name_desc">Nama Z-A</option>
+                                    <option value="name_asc">Nama (A - Z)</option>
+                                    <option value="name_desc">Nama (Z - A)</option>
                                     <option value="price_asc">Harga Termurah</option>
-                                    <option value="price_desc">Harga Termahal</option>
+                                    <option value="price_desc">Harga Tertinggi</option>
                                 </select>
                             </div>
-
-                            <button
-                                onClick={handleApplyFilters}
-                                className="w-full py-2.5 bg-[#0B2545] hover:bg-[#13315C] text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5"
-                            >
-                                Terapkan Filter
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Right Product Grid */}
-                    <div className="lg:col-span-3">
-                        <div className="flex justify-between items-center mb-5 text-xs text-slate-500">
-                            <span className="font-semibold">Menampilkan <strong className="text-slate-800">{products.length}</strong> produk digital</span>
                         </div>
 
-                        {products.length === 0 ? (
-                            <div className="text-center py-20 bg-white border border-slate-200 rounded-3xl text-slate-400 font-medium">
-                                <svg className="w-12 h-12 mx-auto mb-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                Tidak ada produk premium yang sesuai dengan filter Anda.
+                        {/* Main Products Grid */}
+                        <div className="lg:col-span-9 space-y-6">
+                            
+                            {/* Filter Summary */}
+                            <div className="flex items-center justify-between text-xs text-slate-400 bg-slate-900 border border-slate-800 px-5 py-3 rounded-2xl">
+                                <span>Menampilkan <strong className="text-white">{products.length}</strong> Layanan Paket Pembuatan</span>
+                                {selectedCategories.length > 0 && (
+                                    <span className="text-cyan-400 font-medium">Filtered by {selectedCategories.length} Kategori</span>
+                                )}
                             </div>
-                        ) : (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                                {products.map((product) => {
-                                    const isWished = wishlist.includes(product.id);
-                                    const originalPrice = Math.round(product.min_price * 1.25);
-                                    return (
-                                        <div
-                                            key={product.id}
-                                            className="bg-white border border-slate-200 hover:border-slate-300 rounded-2xl p-4 flex flex-col justify-between hover:shadow-lg transition-all duration-300 group relative overflow-hidden shadow-sm"
-                                        >
-                                            {/* Heart Wishlist overlay button */}
-                                            <button
-                                                onClick={(e) => toggleWishlist(product.id, e)}
-                                                className="absolute top-3.5 right-3.5 z-20 p-2 rounded-full bg-white/90 border border-slate-100 hover:scale-110 shadow-sm text-slate-400 hover:text-rose-600 transition-all shrink-0"
+
+                            {products.length === 0 ? (
+                                <div className="text-center py-16 bg-slate-900 border border-slate-800 rounded-3xl space-y-3">
+                                    <p className="text-slate-400 text-sm">Tidak ada paket jasa yang sesuai dengan filter pencarian Anda.</p>
+                                    <button
+                                        onClick={resetFilters}
+                                        className="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl hover:bg-indigo-500"
+                                    >
+                                        Tampilkan Semua Layanan
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {products.map((product) => {
+                                        const minPrice = product.packages && product.packages.length > 0
+                                            ? Math.min(...product.packages.map(p => p.price))
+                                            : 0;
+
+                                        return (
+                                            <div 
+                                                key={product.id} 
+                                                className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col hover:border-indigo-500/50 transition-all hover:-translate-y-1 group shadow-xl"
                                             >
-                                                <svg
-                                                    className="w-4.5 h-4.5"
-                                                    fill={isWished ? 'currentColor' : 'none'}
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                                </svg>
-                                            </button>
+                                                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                                                    <div className="space-y-3">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span className="px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">
+                                                                {product.category?.name || 'Paket Jasa'}
+                                                            </span>
+                                                            {product.badge && (
+                                                                <span className="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 text-white font-mono text-[9px] font-black uppercase">
+                                                                    {product.badge}
+                                                                </span>
+                                                            )}
+                                                        </div>
 
-                                            <Link href={route('product.show', product.slug)} className="block">
-                                                {/* Discount badge */}
-                                                {product.badge && (
-                                                    <span className="absolute top-0 left-0 bg-rose-600 text-white text-[9px] font-black px-2.5 py-1 rounded-br-xl shadow-sm z-10 uppercase">
-                                                        {product.badge}
-                                                    </span>
-                                                )}
+                                                        <h3 className="text-lg font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                                            {product.name}
+                                                        </h3>
 
-                                                {/* Product Image */}
-                                                <div className="aspect-square w-full bg-slate-50 border border-slate-100 rounded-xl overflow-hidden flex items-center justify-center mb-3">
-                                                    {renderProductThumbnail(product)}
+                                                        <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                                                            {product.description}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* Varian paket list */}
+                                                    <div className="space-y-2 pt-3 border-t border-slate-800">
+                                                        <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Varian Paket Layanan:</p>
+                                                        {product.packages && product.packages.map((pkg) => (
+                                                            <div key={pkg.id} className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1">
+                                                                <div className="flex items-center justify-between text-xs">
+                                                                    <span className="font-bold text-white">{pkg.name}</span>
+                                                                    <span className="font-black text-cyan-400">{formatIDR(pkg.price)}</span>
+                                                                </div>
+                                                                <p className="text-[10px] text-slate-400 leading-normal">{pkg.description}</p>
+                                                                <div className="text-[9px] text-indigo-300 font-mono pt-1">⚡ Estimasi Pengerjaan: {pkg.duration_days} Hari Kerja</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 </div>
 
-                                                <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
-                                                    {product.category?.name || 'Aplikasi'}
-                                                </span>
-                                                <h4 className="font-bold text-xs text-slate-800 line-clamp-2 mt-0.5 group-hover:text-indigo-600 transition-colors">
-                                                    {product.name}
-                                                </h4>
-                                            </Link>
+                                                <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between gap-3">
+                                                    <div>
+                                                        <span className="text-[10px] text-slate-400 block">Mulai dari</span>
+                                                        <span className="text-base font-black text-white">{formatIDR(minPrice)}</span>
+                                                    </div>
 
-                                            <div className="border-t border-slate-100 pt-3 mt-3 text-left min-h-[44px]">
-                                                {product.min_original_price ? (
-                                                    <span className="text-[10px] text-slate-400 line-through font-mono block">
-                                                        {formatIDR(product.min_original_price)}
-                                                    </span>
-                                                ) : (
-                                                    <span className="text-[10px] text-transparent select-none font-mono block">-</span>
-                                                )}
-                                                <span className="text-xs font-black text-indigo-650 font-mono block mt-0.5">
-                                                    {formatIDR(product.min_price)}
-                                                </span>
+                                                    <Link
+                                                        href={route('product.show', product.slug)}
+                                                        className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:scale-105"
+                                                    >
+                                                        Pilih & Detail Paket &rarr;
+                                                    </Link>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </main>
+            </div>
         </BuyerLayout>
     );
 }

@@ -66,17 +66,12 @@ export default function AdminLayout({ children, title }) {
             {/* Sidebar for Desktop */}
             <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 transition-transform lg:translate-x-0 lg:static lg:flex lg:flex-col h-full ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="h-16 flex items-center px-6 border-b border-slate-200 gap-3">
-                    {settings?.store_logo_path ? (
-                        <img
-                            src={`/storage/${settings.store_logo_path}`}
-                            alt="Logo"
-                            className="h-8 max-w-[120px] object-contain shrink-0"
-                        />
-                    ) : (
-                        <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30 shrink-0">
-                            PT
-                        </div>
-                    )}
+                    <img
+                        src={settings?.store_logo_path ? (settings.store_logo_path.startsWith('/') ? settings.store_logo_path : `/storage/${settings.store_logo_path}`) : '/logo.png'}
+                        alt="Logo"
+                        className="h-8 max-w-[120px] object-contain shrink-0"
+                        onError={(e) => { e.target.src = '/logo.png'; }}
+                    />
                     <span className="font-extrabold text-lg bg-gradient-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent truncate">
                         {settings?.store_name || 'Prayoga Tech'}
                     </span>

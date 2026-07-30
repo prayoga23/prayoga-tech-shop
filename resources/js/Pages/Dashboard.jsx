@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Head, Link } from '@inertiajs/react';
 import BuyerLayout from '@/Layouts/BuyerLayout';
 
-export default function Dashboard({ auth, orders, settings }) {
+export default function Dashboard({ auth, orders = [], settings }) {
     const [viewingCredentials, setViewingCredentials] = useState(null);
 
     const formatIDR = (value) => {
@@ -17,23 +17,23 @@ export default function Dashboard({ auth, orders, settings }) {
     const getStatusClass = (status) => {
         switch (status) {
             case 'pending':
-                return 'bg-amber-50 text-amber-800 border-amber-200';
+                return 'bg-amber-500/20 text-amber-300 border-amber-500/40';
             case 'paid':
-                return 'bg-blue-50 text-blue-800 border-blue-200';
+                return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40';
             case 'completed':
-                return 'bg-emerald-50 text-emerald-800 border-emerald-200';
+                return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
             case 'cancelled':
-                return 'bg-rose-50 text-rose-800 border-rose-200';
+                return 'bg-rose-500/20 text-rose-300 border-rose-500/40';
             default:
-                return 'bg-slate-50 text-slate-600 border-slate-200';
+                return 'bg-slate-800 text-slate-400 border-slate-700';
         }
     };
 
     const translateStatus = (status) => {
         switch (status) {
             case 'pending': return 'Belum Bayar';
-            case 'paid': return 'Verifikasi Admin';
-            case 'completed': return 'Selesai';
+            case 'paid': return 'Verifikasi / Dalam Pengerjaan';
+            case 'completed': return 'Selesai & Serah Terima';
             case 'cancelled': return 'Dibatalkan';
             default: return status;
         }
@@ -41,86 +41,78 @@ export default function Dashboard({ auth, orders, settings }) {
 
     return (
         <BuyerLayout>
-            <Head title="Dashboard Transaksi Saya" />
+            <Head title="Dashboard Pesanan Proyek Saya - Prayoga Tech" />
 
-            <main className="max-w-5xl mx-auto w-full px-6 py-8 md:py-12 space-y-6">
-                
-                {/* Dashboard Title Header */}
-                <div className="mb-8 border-b border-slate-200 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-black text-[#0B2545]">Riwayat Pemesanan Saya</h1>
-                        <p className="text-xs text-slate-500 mt-1.5 font-medium">Daftar seluruh riwayat pembelian akun premium, status pembayaran, dan akses kredensial Anda.</p>
+            <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
+                <div className="max-w-5xl mx-auto space-y-6">
+                    
+                    {/* Header */}
+                    <div className="border-b border-slate-800 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Portal Klien</span>
+                            <h1 className="text-2xl font-black text-white mt-1">Riwayat Pesanan Proyek Aplikasi</h1>
+                            <p className="text-xs text-slate-400">Pantau status pengerjaan proyek website & aplikasi Android Anda secara real-time.</p>
+                        </div>
+                        <div>
+                            <Link
+                                href={route('katalog')}
+                                className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white rounded-xl text-xs font-bold shadow-md transition-all inline-block"
+                            >
+                                Pesan Proyek Baru &rarr;
+                            </Link>
+                        </div>
                     </div>
-                    <div>
-                        <Link
-                            href={route('home')}
-                            className="px-5 py-2.5 bg-[#0B2545] hover:bg-[#13315C] text-white rounded-xl text-xs font-bold shadow-md transition-colors inline-block"
-                        >
-                            Belanja Lagi
-                        </Link>
-                    </div>
-                </div>
 
-                {/* Orders History Grid */}
-                <div className="space-y-4">
-
-                    <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+                    {/* Orders Table */}
+                    <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="border-b border-slate-200 text-slate-500 text-[10px] uppercase tracking-wider bg-slate-50/50">
-                                        <th className="px-6 py-4.5 font-semibold">Nomor Invoice</th>
-                                        <th className="px-6 py-4.5 font-semibold">Aplikasi & Paket</th>
-                                        <th className="px-6 py-4.5 font-semibold">Nominal</th>
-                                        <th className="px-6 py-4.5 font-semibold text-center">Status</th>
-                                        <th className="px-6 py-4.5 font-semibold text-right">Aksi</th>
+                                    <tr className="border-b border-slate-800 text-slate-400 text-[10px] uppercase tracking-wider bg-slate-950/60">
+                                        <th className="px-6 py-4 font-bold">Nomor Invoice</th>
+                                        <th className="px-6 py-4 font-bold">Layanan Paket</th>
+                                        <th className="px-6 py-4 font-bold">Investasi</th>
+                                        <th className="px-6 py-4 font-bold text-center">Status Proyek</th>
+                                        <th className="px-6 py-4 font-bold text-right">Aksi</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 text-xs md:text-sm text-slate-600">
+                                <tbody className="divide-y divide-slate-800 text-xs text-slate-300">
                                     {orders.length === 0 ? (
                                         <tr>
                                             <td colSpan="5" className="text-center py-16 text-slate-400 font-medium">
-                                                Belum ada transaksi. Silakan checkout produk kami terlebih dahulu!
+                                                Belum ada pesanan proyek. Silakan pilih paket jasa pembuatan kami di katalog!
                                             </td>
                                         </tr>
                                     ) : (
                                         orders.map((order) => (
-                                            <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
-                                                <td className="px-6 py-4 font-bold text-slate-800">
+                                            <tr key={order.id} className="hover:bg-slate-800/50 transition-colors">
+                                                <td className="px-6 py-4 font-mono font-bold text-white">
                                                     {order.order_number}
                                                 </td>
                                                 <td className="px-6 py-4">
                                                     <div>
-                                                        <span className="font-bold text-slate-800 block">
-                                                            {order.product_package?.product?.name || 'Aplikasi Dihapus'}
+                                                        <span className="font-bold text-white block">
+                                                            {order.product_package?.product?.name || 'Paket Jasa'}
                                                         </span>
-                                                        <span className="text-[11px] text-slate-500 block mt-0.5 font-medium">
-                                                            {order.product_package?.name || 'Paket Dihapus'}
+                                                        <span className="text-[11px] text-cyan-300 block mt-0.5 font-medium">
+                                                            {order.product_package?.name || 'Varian Paket'}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 font-mono font-bold text-slate-700">
-                                                    {formatIDR(order.price)}
+                                                <td className="px-6 py-4 font-black text-white">
+                                                    {formatIDR(order.total_amount || order.product_package?.price || 0)}
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
-                                                    <span className={`text-[9px] font-bold px-2.5 py-0.5 rounded-full border ${getStatusClass(order.status)}`}>
+                                                    <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusClass(order.status)}`}>
                                                         {translateStatus(order.status)}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
-                                                    {order.status === 'completed' && order.credentials_sent && (
-                                                        <button
-                                                            onClick={() => setViewingCredentials(order)}
-                                                            className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-lg text-xs font-semibold border border-emerald-100 hover:border-emerald-600 transition-all shadow-sm"
-                                                        >
-                                                            Lihat Akses
-                                                        </button>
-                                                    )}
+                                                <td className="px-6 py-4 text-right space-x-2">
                                                     <Link
                                                         href={route('order.show', order.order_number)}
-                                                        className="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-indigo-600 hover:text-indigo-850 rounded-lg text-xs font-semibold border border-slate-200 transition-all inline-block shadow-sm"
+                                                        className="px-3 py-1.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/40 rounded-xl text-xs font-bold transition-all inline-block"
                                                     >
-                                                        Invoice
+                                                        Detail & Bayar
                                                     </Link>
                                                 </td>
                                             </tr>
@@ -130,64 +122,9 @@ export default function Dashboard({ auth, orders, settings }) {
                             </table>
                         </div>
                     </div>
-                </div>
-            </main>
 
-            {/* Credentials Viewer Modal */}
-            {viewingCredentials && (
-                <div 
-                    onClick={() => setViewingCredentials(null)}
-                    className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-                >
-                    <div 
-                        onClick={(e) => e.stopPropagation()}
-                        className="bg-white border border-slate-200 w-full max-w-lg rounded-2xl shadow-2xl p-6 relative overflow-hidden"
-                    >
-                        <div className="flex justify-between items-center border-b border-slate-200 pb-3.5 mb-4">
-                            <h3 className="text-sm font-bold text-emerald-600 flex items-center gap-1.5">
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                </svg>
-                                Akses Akun: {viewingCredentials.product_package?.product?.name}
-                            </h3>
-                            <button 
-                                onClick={() => setViewingCredentials(null)}
-                                className="text-slate-400 hover:text-slate-600"
-                            >
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="text-xs text-slate-550 text-slate-500">
-                                Invoice: <strong className="text-slate-700 font-mono">{viewingCredentials.order_number}</strong> • Paket: <span className="text-indigo-650 font-bold">{viewingCredentials.product_package?.name}</span>
-                            </div>
-                            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 font-mono text-xs md:text-sm text-slate-700 whitespace-pre-line leading-relaxed shadow-inner">
-                                {viewingCredentials.credentials_sent}
-                            </div>
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(viewingCredentials.credentials_sent);
-                                        alert('Kredensial berhasil disalin!');
-                                    }}
-                                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/10 transition-colors"
-                                >
-                                    Salin Kredensial
-                                </button>
-                                <button
-                                    onClick={() => setViewingCredentials(null)}
-                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-semibold border border-slate-200 transition-colors"
-                                >
-                                    Tutup
-                                </button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-            )}
+            </div>
         </BuyerLayout>
     );
 }
