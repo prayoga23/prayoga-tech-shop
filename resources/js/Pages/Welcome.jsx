@@ -80,7 +80,7 @@ export default function Welcome({ auth, products = [], categories = [], selected
             title: "Aplikasi Reading Log SMKN 3 Malang",
             type: "Web Application",
             tech: ["PHP", "JavaScript", "Bootstrap"],
-            image: "/image/website_sekolah/website-sekolah.gif.gif",
+            image: "/image/website_sekolah/website-sekolah.gif",
             link: "https://readinglogsmkn3malang.com/"
         },
         {

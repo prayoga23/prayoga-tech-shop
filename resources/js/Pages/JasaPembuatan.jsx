@@ -15,7 +15,7 @@ const projects = [
     {
         title: "Aplikasi Reading Log SMKN 3 Malang",
         description: "Aplikasi manajemen log bacaan siswa berbasis web untuk SMKN 3 Malang.",
-        image: "/image/website_sekolah/website-sekolah.gif.gif",
+        image: "/image/website_sekolah/website-sekolah.gif",
         link: "https://readinglogsmkn3malang.com/",
         tags: ["PHP Native", "HTML", "Javascript", "CSS"],
         category: "web",
