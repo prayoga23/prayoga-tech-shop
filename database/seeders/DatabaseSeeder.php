@@ -254,29 +254,38 @@ class DatabaseSeeder extends Seeder
 
         // 4. Seed Payment Methods
         PaymentMethod::updateOrCreate(
-            ['name' => 'Bank BCA'],
+            ['name' => 'Bank BNI'],
             [
-                'account_number' => '8720192831',
-                'account_name' => 'PT Prayoga Tech Indonesia',
-                'instructions' => 'Kirim transfer via ATM, Mobile Banking, atau Internet Banking ke nomor rekening BCA yang tertera. Simpan bukti transfer untuk diunggah.',
+                'account_number' => '1483206378',
+                'account_name' => 'Prayoga Nugroho Pangestu',
+                'instructions' => 'Kirim transfer via Mobile Banking BNI, ATM, atau Internet Banking ke nomor rekening 1483206378 a.n. Prayoga Nugroho Pangestu.',
                 'is_active' => true,
             ]
         );
         PaymentMethod::updateOrCreate(
-            ['name' => 'Bank Mandiri'],
+            ['name' => 'Dana'],
             [
-                'account_number' => '1310029381928',
-                'account_name' => 'PT Prayoga Tech Indonesia',
-                'instructions' => 'Kirim transfer via Livin by Mandiri atau ATM. Gunakan nominal persis sesuai tagihan pesanan.',
+                'account_number' => '0882008684316',
+                'account_name' => 'Prayoga Nugroho Pangestu',
+                'instructions' => 'Kirim saldo DANA ke nomor 0882008684316 a.n. Prayoga Nugroho Pangestu.',
                 'is_active' => true,
             ]
         );
         PaymentMethod::updateOrCreate(
-            ['name' => 'E-Wallet Dana / QRIS'],
+            ['name' => 'ShopeePay'],
             [
-                'account_number' => '081234567890',
-                'account_name' => 'Prayoga Tech Official',
-                'instructions' => 'Kirim saldo Dana ke nomor di atas, atau scan QRIS resmi Prayoga Tech pada halaman konfirmasi pembayaran.',
+                'account_number' => '08990703408',
+                'account_name' => 'Prayoga Nugroho Pangestu',
+                'instructions' => 'Kirim saldo ShopeePay ke nomor 08990703408 a.n. Prayoga Nugroho Pangestu.',
+                'is_active' => true,
+            ]
+        );
+        PaymentMethod::updateOrCreate(
+            ['name' => 'GoPay'],
+            [
+                'account_number' => '08990703408',
+                'account_name' => 'Prayoga Nugroho Pangestu',
+                'instructions' => 'Kirim saldo GoPay ke nomor 08990703408 a.n. Prayoga Nugroho Pangestu.',
                 'is_active' => true,
             ]
         );

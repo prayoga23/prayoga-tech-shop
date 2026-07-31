@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -66,12 +67,12 @@ class AdminOrderController extends Controller
         if ($order->checkout_token) {
             Order::where('checkout_token', $order->checkout_token)
                 ->whereIn('status', ['pending', 'paid'])
-                ->update(['status' => 'paid']);
+                ->update(['status' => 'completed']);
         } else {
-            $order->update(['status' => 'paid']);
+            $order->update(['status' => 'completed']);
         }
 
-        return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi! Silakan kirim kredensial untuk menyelesaikan.');
+        return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi! Pesanan telah ditandai Selesai.');
     }
 
     public function deliverCredentials(Request $request, Order $order): RedirectResponse
@@ -80,7 +81,7 @@ class AdminOrderController extends Controller
             'credentials_sent' => 'required|string',
         ]);
 
-        if ($order->status === 'completed' || $order->status === 'cancelled') {
+        if ($order->status === 'cancelled') {
             return redirect()->back()->with('error', 'Status pesanan tidak mendukung pengiriman akses.');
         }
 
@@ -101,5 +102,19 @@ class AdminOrderController extends Controller
         $order->update(['status' => 'cancelled']);
 
         return redirect()->back()->with('success', 'Pesanan berhasil dibatalkan.');
+    }
+
+    public function checkPendingPayments(Request $request): JsonResponse
+    {
+        $pendingOrders = Order::with(['paymentMethod', 'productPackage.product'])
+            ->where('status', 'paid')
+            ->whereNotNull('payment_proof_path')
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'count' => $pendingOrders->count(),
+            'orders' => $pendingOrders,
+        ]);
     }
 }

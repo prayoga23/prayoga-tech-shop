@@ -275,13 +275,16 @@ export default function Show({ order, groupOrders = [] }) {
                         <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                             <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-3">Tindakan Admin</h3>
                             <div className="space-y-3">
-                                {order.status === 'pending' && (
+                                {(order.status === 'pending' || order.status === 'paid') && (
                                     <button
                                         onClick={handleConfirmPayment}
                                         disabled={statusForm.processing}
-                                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/10"
+                                        className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20"
                                     >
-                                        Konfirmasi Sudah Bayar
+                                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Konfirmasi Pembayaran Diterima
                                     </button>
                                 )}
                                 <button

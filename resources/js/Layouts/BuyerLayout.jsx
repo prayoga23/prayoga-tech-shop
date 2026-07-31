@@ -47,24 +47,24 @@ export default function BuyerLayout({ children }) {
     const storeName = settings?.store_name || 'Prayoga Tech Software House';
 
     return (
-        <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col selection:bg-indigo-500 selection:text-white">
+        <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col selection:bg-indigo-500 selection:text-white overflow-x-hidden w-full">
             
             {/* Top Navy Dark Modern Header */}
-            <header className="sticky top-0 bg-[#0A0F1D]/95 backdrop-blur-md text-white z-50 border-b border-slate-800 shadow-xl">
-                <div className="max-w-7xl mx-auto px-4 md:px-8 py-3.5 flex items-center justify-between gap-4">
+            <header className="sticky top-0 bg-[#0A0F1D]/95 backdrop-blur-md text-white z-50 border-b border-slate-800 shadow-xl w-full">
+                <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Brand Logo & Title */}
-                    <Link href="/" className="flex items-center gap-3 group shrink-0">
+                    <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0 min-w-0">
                         <img 
                             src={settings?.store_logo_path ? (settings.store_logo_path.startsWith('/') ? settings.store_logo_path : `/storage/${settings.store_logo_path}`) : '/logo.png'} 
                             alt="Logo" 
-                            className="h-10 max-w-[190px] object-contain shrink-0" 
+                            className="h-8 sm:h-10 max-w-[32px] sm:max-w-[190px] object-contain shrink-0" 
                             onError={(e) => { e.target.src = '/logo.png'; }}
                         />
-                        <div className="flex flex-col">
-                            <span className="font-extrabold text-lg tracking-tight text-white group-hover:text-indigo-300 transition-colors">
+                        <div className="flex flex-col min-w-0">
+                            <span className="font-extrabold text-xs sm:text-lg tracking-tight text-white group-hover:text-indigo-300 transition-colors truncate max-w-[110px] xs:max-w-[150px] sm:max-w-none">
                                 {storeName}
                             </span>
-                            <span className="text-[10px] text-cyan-400 font-medium tracking-wider uppercase -mt-1">
+                            <span className="text-[8px] sm:text-[10px] text-cyan-400 font-medium tracking-wider uppercase -mt-0.5 sm:-mt-1 truncate max-w-[110px] xs:max-w-[150px] sm:max-w-none">
                                 Web & Android Dev Studio
                             </span>
                         </div>
@@ -91,11 +91,11 @@ export default function BuyerLayout({ children }) {
                     </form>
 
                     {/* Right User Actions */}
-                    <div className="flex items-center gap-3 text-xs font-bold">
-                        {/* Wishlist Icon */}
+                    <div className="flex items-center gap-2 sm:gap-3 text-xs font-bold shrink-0">
+                        {/* Wishlist Icon (Desktop only) */}
                         <Link 
                             href={route('wishlist.index')} 
-                            className="relative w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 flex items-center justify-center text-slate-300 hover:text-white transition-all shadow-sm" 
+                            className="hidden md:flex relative w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 items-center justify-center text-slate-300 hover:text-white transition-all shadow-sm" 
                             title="Wishlist Layanan"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -108,10 +108,10 @@ export default function BuyerLayout({ children }) {
                             </span>
                         </Link>
 
-                        {/* Cart Icon */}
+                        {/* Cart Icon (Desktop only) */}
                         <Link 
                             href={route('cart.index')} 
-                            className="relative w-9 h-9 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 flex items-center justify-center text-indigo-300 hover:text-white transition-all shadow-sm" 
+                            className="hidden md:flex relative w-9 h-9 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 items-center justify-center text-indigo-300 hover:text-white transition-all shadow-sm" 
                             title="Keranjang Pesanan"
                         >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,10 +126,10 @@ export default function BuyerLayout({ children }) {
 
                         {/* Profile or Login */}
                         {auth.user ? (
-                            <div id="profile-dropdown-container" className="relative">
+                            <div id="profile-dropdown-container" className="relative shrink-0">
                                 <button
                                     onClick={() => setShowProfileDropdown(!showProfileDropdown)}
-                                    className="h-9 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center gap-2 text-slate-200 hover:text-white transition-all shadow-sm"
+                                    className="h-9 px-2.5 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center gap-2 text-slate-200 hover:text-white transition-all shadow-sm"
                                     type="button"
                                 >
                                     <div className="w-6 h-6 rounded-full bg-indigo-500 text-white flex items-center justify-center text-[10px] font-black uppercase">
@@ -197,13 +197,13 @@ export default function BuyerLayout({ children }) {
                                 )}
                             </div>
                         ) : (
-                            <div className="flex items-center gap-2.5">
-                                <Link href={route('login')} className="px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-bold transition-colors">
+                            <div className="flex items-center gap-2 shrink-0">
+                                <Link href={route('login')} className="hidden md:inline-block px-3.5 py-1.5 text-slate-300 hover:text-white text-xs font-bold transition-colors">
                                     Masuk
                                 </Link>
                                 <Link
                                     href={route('register')}
-                                    className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/30 transition-all hover:scale-105"
+                                    className="px-3 sm:px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/30 transition-all shrink-0"
                                 >
                                     Daftar Klien
                                 </Link>
@@ -213,7 +213,7 @@ export default function BuyerLayout({ children }) {
                         {/* Mobile Toggle Button */}
                         <button
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            className="md:hidden w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white"
+                            className="md:hidden w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-slate-300 hover:text-white shrink-0"
                         >
                             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
@@ -223,7 +223,7 @@ export default function BuyerLayout({ children }) {
                 </div>
 
                 {/* Sub Navigation Bar */}
-                <div className="bg-[#070B14] border-t border-slate-800/80 text-xs">
+                <div className="bg-[#070B14] border-t border-slate-800/80 text-xs w-full">
                     <div className="max-w-7xl mx-auto px-4 md:px-8 py-2.5 flex items-center justify-between overflow-x-auto whitespace-nowrap gap-6 scrollbar-none">
                         <div className="flex items-center gap-6 font-semibold text-slate-300">
                             <Link href={route('home')} className="hover:text-white transition-colors">
@@ -278,6 +278,36 @@ export default function BuyerLayout({ children }) {
                             <Link href={route('tentang-kami')} className="p-2.5 rounded-xl bg-slate-800/60 text-slate-200">Tentang Kami</Link>
                             <Link href={route('hubungi-kami')} className="p-2.5 rounded-xl bg-slate-800/60 text-slate-200">Hubungi Kami</Link>
                         </div>
+                        <div className="grid grid-cols-2 gap-2 pt-1">
+                            <Link href={route('wishlist.index')} className="p-2.5 rounded-xl bg-slate-800/90 border border-slate-700/80 text-slate-200 flex items-center justify-between text-xs font-bold">
+                                <span className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                    Wishlist
+                                </span>
+                                <span className="bg-rose-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">{wishlistCount}</span>
+                            </Link>
+                            <Link href={route('cart.index')} className="p-2.5 rounded-xl bg-slate-800/90 border border-indigo-500/40 text-slate-200 flex items-center justify-between text-xs font-bold">
+                                <span className="flex items-center gap-2">
+                                    <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                    Keranjang
+                                </span>
+                                <span className="bg-indigo-600 text-white text-[10px] px-1.5 py-0.5 rounded-full font-mono">{cartCount}</span>
+                            </Link>
+                        </div>
+                        {!auth.user && (
+                            <div className="pt-2 border-t border-slate-800 flex items-center gap-2">
+                                <Link href={route('login')} className="flex-1 text-center py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700">
+                                    Masuk
+                                </Link>
+                                <Link href={route('register')} className="flex-1 text-center py-2 px-3 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-md">
+                                    Daftar Klien
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 )}
             </header>

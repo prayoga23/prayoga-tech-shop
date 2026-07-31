@@ -3,9 +3,103 @@ import { Link, usePage } from '@inertiajs/react';
 
 export default function AdminLayout({ children, title }) {
     const { auth, flash, settings } = usePage().props;
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [showNotification, setShowNotification] = useState(false);
-    const [notificationMessage, setNotificationMessage] = useState({ type: '', text: '' });
+    const [notifPermission, setNotifPermission] = useState(
+        typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'denied'
+    );
+    const [pendingPaymentCount, setPendingPaymentCount] = useState(0);
+
+    const playChimeSound = () => {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            const now = ctx.currentTime;
+            
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(587.33, now); // D5
+            gain1.gain.setValueAtTime(0.2, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.3);
+
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880, now + 0.15); // A5
+            gain2.gain.setValueAtTime(0.3, now + 0.15);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.15);
+            osc2.stop(now + 0.6);
+        } catch (e) {
+            console.log('Audio chime error:', e);
+        }
+    };
+
+    const triggerChromeNotification = (title, body, targetUrl) => {
+        playChimeSound();
+
+        const logoUrl = settings?.store_logo_path ? (settings.store_logo_path.startsWith('/') ? settings.store_logo_path : `/storage/${settings.store_logo_path}`) : '/logo.png';
+
+        if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.ready.then((reg) => {
+                reg.showNotification(title, {
+                    body: body,
+                    icon: logoUrl,
+                    badge: logoUrl,
+                    vibrate: [200, 100, 200, 100, 200],
+                    tag: 'payment-' + Date.now(),
+                    data: { url: targetUrl }
+                });
+            });
+        } else if ('Notification' in window && Notification.permission === 'granted') {
+            const notif = new Notification(title, {
+                body: body,
+                icon: logoUrl,
+            });
+            notif.onclick = () => {
+                window.focus();
+                window.location.href = targetUrl;
+            };
+        }
+    };
+
+    const requestChromeNotificationPermission = async () => {
+        if (!('Notification' in window)) {
+            alert('Browser Anda tidak mendukung Web Notifications.');
+            return;
+        }
+        try {
+            const permission = await Notification.requestPermission();
+            setNotifPermission(permission);
+            if (permission === 'granted') {
+                setNotificationMessage({
+                    type: 'success',
+                    text: '🔔 Notifikasi Chrome berhasil diaktifkan! Bukti pembayaran baru akan muncul langsung di HP/Laptop Anda.'
+                });
+                setShowNotification(true);
+
+                triggerChromeNotification(
+                    '🔔 Notifikasi Chrome Aktif!',
+                    'Sistem notifikasi bukti pembayaran Prayoga Tech aktif. Setiap ada transfer baru dari pembeli, notifikasi akan langsung terkirim ke HP Anda.',
+                    route('admin.orders.index')
+                );
+            } else {
+                setNotificationMessage({
+                    type: 'error',
+                    text: 'Izin notifikasi Chrome ditolak. Silakan izinkan notifikasi di setelan browser HP/Laptop Anda.'
+                });
+                setShowNotification(true);
+            }
+        } catch (e) {
+            console.error('Error requesting notification permission:', e);
+        }
+    };
 
     useEffect(() => {
         if (flash?.success) {
@@ -20,6 +114,55 @@ export default function AdminLayout({ children, title }) {
             return () => clearTimeout(timer);
         }
     }, [flash]);
+
+    useEffect(() => {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch((err) => console.log('SW Reg Error:', err));
+        }
+
+        const checkPendingPayments = async () => {
+            try {
+                const res = await fetch(route('admin.orders.check-pending'));
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                setPendingPaymentCount(data.count);
+
+                const notifiedIds = JSON.parse(localStorage.getItem('notified_payment_ids') || '[]');
+                let hasNewNotif = false;
+
+                data.orders.forEach((order) => {
+                    if (!notifiedIds.includes(order.id)) {
+                        const title = `💳 BUKTI PEMBAYARAN: #${order.order_number}`;
+                        const body = `${order.customer_name} mengunggah bukti bayar (${order.payment_method?.name || 'Transfer'}). Klik untuk konfirmasi!`;
+                        const targetUrl = route('admin.orders.show', order.id);
+
+                        triggerChromeNotification(title, body, targetUrl);
+
+                        setNotificationMessage({
+                            type: 'success',
+                            text: `💳 ${order.customer_name} telah mengirimkan bukti pembayaran! (${order.order_number})`
+                        });
+                        setShowNotification(true);
+
+                        notifiedIds.push(order.id);
+                        hasNewNotif = true;
+                    }
+                });
+
+                if (hasNewNotif) {
+                    localStorage.setItem('notified_payment_ids', JSON.stringify(notifiedIds));
+                }
+            } catch (err) {
+                // Silent catch
+            }
+        };
+
+        checkPendingPayments();
+        const interval = setInterval(checkPendingPayments, 8000); // Check every 8 seconds
+
+        return () => clearInterval(interval);
+    }, []);
 
     const navItems = [
         { name: 'Dashboard', href: route('admin.dashboard'), icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z' },
@@ -140,7 +283,51 @@ export default function AdminLayout({ children, title }) {
                         <h1 className="font-bold text-base md:text-lg text-slate-800">{title}</h1>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                        {/* Pending Payments Badge */}
+                        <Link
+                            href={route('admin.orders.index') + '?status=paid'}
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                                pendingPaymentCount > 0
+                                    ? 'bg-amber-50 border-amber-300 text-amber-800 shadow-sm animate-pulse'
+                                    : 'bg-slate-50 border-slate-200 text-slate-600'
+                            }`}
+                            title="Bukti Transfer Perlu Konfirmasi"
+                        >
+                            <svg className="w-4 h-4 text-amber-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span className="hidden sm:inline">Bukti Transfer:</span>
+                            <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono font-bold ${pendingPaymentCount > 0 ? 'bg-amber-600 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                                {pendingPaymentCount}
+                            </span>
+                        </Link>
+
+                        {/* Chrome Notification Permission Button */}
+                        {notifPermission !== 'granted' ? (
+                            <button
+                                onClick={requestChromeNotificationPermission}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 text-xs font-bold transition-all shadow-sm"
+                                title="Klik untuk mengaktifkan notifikasi Chrome HP/Laptop"
+                            >
+                                <svg className="w-4 h-4 text-indigo-600 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                <span className="hidden sm:inline">Aktifkan Notif Chrome HP</span>
+                                <span className="sm:hidden">Notif Chrome</span>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={requestChromeNotificationPermission}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold transition-all shadow-sm"
+                                title="Notifikasi Chrome Aktif"
+                            >
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="hidden sm:inline">Notif Chrome HP (Aktif)</span>
+                                <span className="sm:hidden">Notif Aktif</span>
+                            </button>
+                        )}
+
                         <div className="flex flex-col text-right hidden sm:flex">
                             <span className="text-sm font-semibold text-slate-800">{auth.user.name}</span>
                             <span className="text-xs text-indigo-600 font-semibold">Administrator</span>

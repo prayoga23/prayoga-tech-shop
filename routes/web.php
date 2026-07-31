@@ -81,6 +81,7 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
     // Orders Management
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
+    Route::get('/check-pending-payments', [AdminOrderController::class, 'checkPendingPayments'])->name('orders.check-pending');
     Route::patch('/orders/{order}/confirm', [AdminOrderController::class, 'confirmPayment'])->name('orders.confirm');
     Route::patch('/orders/{order}/deliver', [AdminOrderController::class, 'deliverCredentials'])->name('orders.deliver');
     Route::patch('/orders/{order}/cancel', [AdminOrderController::class, 'cancel'])->name('orders.cancel');
