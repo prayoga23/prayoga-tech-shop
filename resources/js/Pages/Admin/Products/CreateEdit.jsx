@@ -199,7 +199,7 @@ export default function CreateEdit({ categories, isEdit, product }) {
                                         type="text"
                                         value={pkg.name}
                                         onChange={(e) => handlePackageChange(index, 'name', e.target.value)}
-                                        placeholder="Contoh: 1 Bulan Shared, 1 Tahun Private"
+                                        placeholder="Contoh: Paket Basic - Single Page, Paket Pro - Multi Page"
                                         className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-slate-800 text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all placeholder-slate-400"
                                         required
                                     />
