@@ -2,7 +2,19 @@ import React from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, Link } from '@inertiajs/react';
 
-export default function Dashboard({ stats, recentOrders, earningsChartData }) {
+export default function Dashboard({ stats = {}, recentOrders = [], earningsChartData = [] }) {
+    const safeStats = {
+        total_revenue: 0,
+        total_orders: 0,
+        pending_orders: 0,
+        paid_orders: 0,
+        total_products: 0,
+        total_users: 0,
+        ...(stats || {})
+    };
+    const safeChartData = Array.isArray(earningsChartData) ? earningsChartData : [];
+    const safeRecentOrders = Array.isArray(recentOrders) ? recentOrders : [];
+
     // Helper to format currency
     const formatIDR = (value) => {
         return new Intl.NumberFormat('id-ID', {
@@ -10,11 +22,11 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
             currency: 'IDR',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
-        }).format(value);
+        }).format(value || 0);
     };
 
     // Calculate max value for chart scaling
-    const maxEarning = Math.max(...earningsChartData.map(item => item.total), 100000);
+    const maxEarning = Math.max(...safeChartData.map(item => item?.total || 0), 100000);
 
     const getStatusClass = (status) => {
         switch (status) {
@@ -53,7 +65,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Pendapatan</p>
-                            <h3 className="text-2xl font-bold mt-2 text-indigo-650 text-indigo-600">{formatIDR(stats.total_revenue)}</h3>
+                            <h3 className="text-2xl font-bold mt-2 text-indigo-650 text-indigo-600">{formatIDR(safeStats.total_revenue)}</h3>
                         </div>
                         <div className="p-3 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-xl">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -69,7 +81,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Pesanan</p>
-                            <h3 className="text-2xl font-bold mt-2 text-sky-600">{stats.total_orders}</h3>
+                            <h3 className="text-2xl font-bold mt-2 text-sky-600">{safeStats.total_orders}</h3>
                         </div>
                         <div className="p-3 bg-sky-50 border border-sky-100 text-sky-600 rounded-xl">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -85,7 +97,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Perlu Konfirmasi</p>
-                            <h3 className="text-2xl font-bold mt-2 text-amber-600">{stats.paid_orders}</h3>
+                            <h3 className="text-2xl font-bold mt-2 text-amber-600">{safeStats.paid_orders}</h3>
                         </div>
                         <div className="p-3 bg-amber-50 border border-amber-100 text-amber-605 text-amber-600 rounded-xl">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -101,7 +113,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                     <div className="flex justify-between items-start">
                         <div>
                             <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider">Total Pelanggan</p>
-                            <h3 className="text-2xl font-bold mt-2 text-violet-600">{stats.total_users}</h3>
+                            <h3 className="text-2xl font-bold mt-2 text-violet-600">{safeStats.total_users}</h3>
                         </div>
                         <div className="p-3 bg-violet-50 border border-violet-100 text-violet-600 rounded-xl">
                             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -118,7 +130,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                 <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6 lg:col-span-2 flex flex-col">
                     <h3 className="text-base font-bold text-slate-800 mb-6">Grafik Pendapatan Bulanan ({new Date().getFullYear()})</h3>
                     <div className="flex-1 flex items-end justify-between gap-2 h-64 pt-6 px-2">
-                        {earningsChartData.map((item) => {
+                        {safeChartData.map((item) => {
                             const barHeight = (item.total / maxEarning) * 100;
                             return (
                                 <div key={item.name} className="flex flex-col items-center justify-end h-full flex-1 group">
@@ -151,7 +163,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                     </div>
 
                     <div className="flex-1 space-y-4">
-                        {recentOrders.length === 0 ? (
+                        {safeRecentOrders.length === 0 ? (
                             <div className="h-full flex flex-col items-center justify-center text-slate-400 py-12 text-sm font-medium">
                                 <svg className="w-12 h-12 mb-3 text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
@@ -159,7 +171,7 @@ export default function Dashboard({ stats, recentOrders, earningsChartData }) {
                                 Belum ada pesanan masuk.
                             </div>
                         ) : (
-                            recentOrders.map((order) => (
+                            safeRecentOrders.map((order) => (
                                 <Link 
                                     key={order.id} 
                                     href={route('admin.orders.show', order.id)}

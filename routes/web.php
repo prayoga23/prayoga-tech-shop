@@ -92,6 +92,7 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
     // Settings Management
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::post('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    Route::post('/settings/test-email', [AdminSettingController::class, 'testEmail'])->name('settings.test-email');
 });
 
 require __DIR__.'/auth.php';

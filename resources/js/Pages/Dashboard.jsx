@@ -100,7 +100,7 @@ export default function Dashboard({ auth, orders = [], settings }) {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 font-black text-white">
-                                                    {formatIDR(order.total_amount || order.product_package?.price || 0)}
+                                                    {formatIDR(order.price || order.total_amount || order.product_package?.price || order.productPackage?.price || 0)}
                                                 </td>
                                                 <td className="px-6 py-4 text-center">
                                                     <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusClass(order.status)}`}>

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PaymentProofUploadedMail;
 use App\Models\Order;
 use App\Models\ProductPackage;
 use App\Models\Promo;
+use App\Services\WhatsAppNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -101,6 +105,7 @@ class OrderController extends Controller
         if ($request->hasFile('payment_proof')) {
             $path = $request->file('payment_proof')->store('payment_proofs', 'public');
 
+            $groupOrders = null;
             if ($order->checkout_token) {
                 $siblingOrders = Order::where('checkout_token', $order->checkout_token)->get();
                 foreach ($siblingOrders as $sib) {
@@ -112,6 +117,7 @@ class OrderController extends Controller
                         'status' => 'paid',
                     ]);
                 }
+                $groupOrders = $siblingOrders;
             } else {
                 if ($order->payment_proof_path) {
                     Storage::disk('public')->delete($order->payment_proof_path);
@@ -122,7 +128,22 @@ class OrderController extends Controller
                 ]);
             }
 
-            return redirect()->back()->with('success', 'Bukti transfer berhasil diunggah! Menunggu konfirmasi admin.');
+            // Send Email Notification to Admin via SMTP
+            try {
+                $adminEmail = \App\Models\Setting::get('admin_email', config('mail.admin_email', 'prayoga2np@gmail.com'));
+                Mail::to($adminEmail)->send(new PaymentProofUploadedMail($order->fresh(), $groupOrders));
+            } catch (\Throwable $e) {
+                Log::error('Failed sending payment proof email notification to admin: ' . $e->getMessage());
+            }
+
+            // Send WhatsApp Notification via Meta Business Cloud API (if enabled)
+            try {
+                WhatsAppNotificationService::sendPaymentProofNotification($order->fresh(), $groupOrders);
+            } catch (\Throwable $e) {
+                Log::error('Failed sending payment proof WhatsApp notification to admin: ' . $e->getMessage());
+            }
+
+            return redirect()->back()->with('success', 'Bukti transfer berhasil diunggah! Notifikasi telah dikirim ke Admin untuk dikonfirmasi.');
         }
 
         return redirect()->back()->with('error', 'Gagal mengunggah file bukti transfer.');

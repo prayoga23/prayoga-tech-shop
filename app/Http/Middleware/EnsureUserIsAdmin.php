@@ -19,6 +19,10 @@ class EnsureUserIsAdmin
             return $next($request);
         }
 
-        abort(403, 'Unauthorized action. You must be an administrator.');
+        if ($request->user()) {
+            return redirect()->route('dashboard')->with('error', 'Akses ditolak. Halaman tersebut khusus untuk Administrator.');
+        }
+
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu sebagai Administrator.');
     }
 }

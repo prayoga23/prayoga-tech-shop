@@ -7,6 +7,9 @@ export default function AdminLayout({ children, title }) {
         typeof window !== 'undefined' && 'Notification' in window ? Notification.permission : 'denied'
     );
     const [pendingPaymentCount, setPendingPaymentCount] = useState(0);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [showNotification, setShowNotification] = useState(false);
+    const [notificationMessage, setNotificationMessage] = useState({ type: 'success', text: '' });
 
     const playChimeSound = () => {
         try {

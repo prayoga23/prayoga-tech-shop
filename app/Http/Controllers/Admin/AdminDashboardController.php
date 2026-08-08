@@ -27,21 +27,15 @@ class AdminDashboardController extends Controller
             ->get();
 
         // Get monthly earnings for the current year
-        $driver = DB::connection()->getDriverName();
-        $monthExpr = $driver === 'sqlite' 
-            ? 'strftime("%m", created_at)' 
-            : 'DATE_FORMAT(created_at, "%m")';
-
-        $monthlyEarnings = Order::where('status', 'completed')
+        $completedOrdersThisYear = Order::where('status', 'completed')
             ->whereYear('created_at', date('Y'))
-            ->select(
-                DB::raw("$monthExpr as month"),
-                DB::raw('SUM(price) as total')
-            )
-            ->groupBy('month')
-            ->get()
-            ->pluck('total', 'month')
-            ->all();
+            ->get();
+
+        $monthlyEarnings = [];
+        foreach ($completedOrdersThisYear as $order) {
+            $month = $order->created_at->format('m');
+            $monthlyEarnings[$month] = ($monthlyEarnings[$month] ?? 0) + $order->price;
+        }
 
         // Format to 12 months array
         $earningsChartData = [];
