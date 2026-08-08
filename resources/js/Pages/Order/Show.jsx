@@ -56,13 +56,27 @@ export default function Show({ order, groupOrders = [] }) {
                     </div>
                 );
             case 'paid':
+                const adminWa = settings?.whatsapp_number || '628990703408';
+                const waText = encodeURIComponent(`Halo Admin Prayoga Tech, saya telah mengunggah bukti pembayaran untuk Invoice #${order.order_number} sebesar ${formatIDR(netTotal)}. Mohon dikonfirmasi.`);
                 return (
-                    <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-5 text-cyan-300 text-xs md:text-sm leading-relaxed">
-                        <h4 className="font-bold text-sm mb-1.5 flex items-center gap-2 text-cyan-300">
+                    <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-5 text-cyan-300 text-xs md:text-sm leading-relaxed space-y-3">
+                        <h4 className="font-bold text-sm flex items-center gap-2 text-cyan-300">
                             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
                             Bukti Transfer Terkirim - Menunggu Konfirmasi Admin
                         </h4>
-                        Bukti pembayaran Anda telah berhasil diunggah dan sedang dalam proses verifikasi oleh Admin. Tim kami akan segera mengonfirmasi pesanan Anda.
+                        <p>
+                            Bukti pembayaran Anda telah berhasil diunggah dan sedang dalam proses verifikasi oleh Admin. Tim kami akan segera mengonfirmasi pesanan Anda.
+                        </p>
+                        <div>
+                            <a
+                                href={`https://wa.me/${adminWa}?text=${waText}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+                            >
+                                💬 Konfirmasi Langsung via WhatsApp CS (08990703408) &rarr;
+                            </a>
+                        </div>
                     </div>
                 );
             case 'completed':
