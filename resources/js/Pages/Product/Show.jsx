@@ -39,10 +39,10 @@ export default function Show({ product, paymentMethods = [] }) {
         if (existing) {
             existing.quantity += 1;
         } else {
-            storedCart.push({ 
-                package_id: selectedPackage.id, 
+            storedCart.push({
+                package_id: selectedPackage.id,
                 quantity: 1,
-                notes: projectNotes 
+                notes: projectNotes
             });
         }
         localStorage.setItem('cart', JSON.stringify(storedCart));
@@ -124,7 +124,7 @@ export default function Show({ product, paymentMethods = [] }) {
 
             <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-6">
-                    
+
                     {/* Back Link */}
                     <div>
                         <Link
@@ -136,7 +136,7 @@ export default function Show({ product, paymentMethods = [] }) {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                        
+
                         {/* Left Info Column */}
                         <div className="lg:col-span-5 space-y-6">
                             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-xl relative overflow-hidden">
@@ -208,7 +208,7 @@ export default function Show({ product, paymentMethods = [] }) {
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-6">
-                                    
+
                                     {/* 1. Select Package */}
                                     <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
                                         <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
@@ -223,11 +223,10 @@ export default function Show({ product, paymentMethods = [] }) {
                                                     <div
                                                         key={pkg.id}
                                                         onClick={() => handlePackageSelect(pkg)}
-                                                        className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${
-                                                            isSelected
+                                                        className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${isSelected
                                                                 ? 'bg-indigo-950/80 border-indigo-500 shadow-md'
                                                                 : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         {isSelected && (
                                                             <span className="absolute top-3 right-3 text-cyan-400 font-bold text-xs">
@@ -285,7 +284,7 @@ export default function Show({ product, paymentMethods = [] }) {
                                                 type="text"
                                                 value={form.data.customer_whatsapp}
                                                 onChange={(e) => form.setData('customer_whatsapp', e.target.value)}
-                                                placeholder="Contoh: 081234567890"
+                                                placeholder="Contoh: 08990703408"
                                                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none font-mono"
                                                 required
                                             />
@@ -320,11 +319,10 @@ export default function Show({ product, paymentMethods = [] }) {
                                                     <div
                                                         key={pm.id}
                                                         onClick={() => form.setData('payment_method_id', pm.id)}
-                                                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
-                                                            isSelected
+                                                        className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isSelected
                                                                 ? 'bg-indigo-950/80 border-indigo-500'
                                                                 : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <div>
                                                             <h4 className="font-bold text-xs text-white">{pm.name}</h4>
@@ -369,11 +367,10 @@ export default function Show({ product, paymentMethods = [] }) {
                                             <button
                                                 type="button"
                                                 onClick={handleToggleWishlist}
-                                                className={`px-4 py-3 rounded-xl text-xs font-bold border transition-all ${
-                                                    inWishlist 
-                                                        ? 'bg-rose-950/80 border-rose-600 text-rose-300' 
+                                                className={`px-4 py-3 rounded-xl text-xs font-bold border transition-all ${inWishlist
+                                                        ? 'bg-rose-950/80 border-rose-600 text-rose-300'
                                                         : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 {inWishlist ? '♥ Wishlist' : '♡ Wishlist'}
                                             </button>

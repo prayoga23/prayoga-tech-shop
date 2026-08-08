@@ -60,9 +60,9 @@ export default function Show({ order, groupOrders = [] }) {
                     <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-5 text-cyan-300 text-xs md:text-sm leading-relaxed">
                         <h4 className="font-bold text-sm mb-1.5 flex items-center gap-2 text-cyan-300">
                             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                            Pembayaran Diverifikasi - Dalam Pengerjaan Proyek
+                            Bukti Transfer Terkirim - Menunggu Konfirmasi Admin
                         </h4>
-                        Bukti pembayaran telah dikonfirmasi! Tim software engineer kami sedang mengode aplikasi dan merancang arsitektur sistem Anda.
+                        Bukti pembayaran Anda telah berhasil diunggah dan sedang dalam proses verifikasi oleh Admin. Tim kami akan segera mengonfirmasi pesanan Anda.
                     </div>
                 );
             case 'completed':
@@ -146,18 +146,24 @@ export default function Show({ order, groupOrders = [] }) {
                         {/* Payment Proof Upload Form */}
                         {order.status === 'pending' && (
                             <form onSubmit={handleUploadProof} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-3">
-                                <h3 className="text-xs font-bold text-white uppercase tracking-wider">Unggah Bukti Transfer Bank / QRIS</h3>
+                                <div className="flex items-center justify-between">
+                                    <h3 className="text-xs font-bold text-white uppercase tracking-wider">Unggah Bukti Transfer Bank / QRIS</h3>
+                                    <span className="text-[10px] text-slate-400 font-medium">Gambar (JPG, PNG, WEBP) / PDF (Maks. 10MB)</span>
+                                </div>
                                 <input
                                     type="file"
                                     onChange={(e) => form.setData('payment_proof', e.target.files[0])}
-                                    accept="image/*"
-                                    className="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500"
+                                    accept="image/*,.pdf,application/pdf"
+                                    className="block w-full text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer"
                                     required
                                 />
+                                {form.errors.payment_proof && (
+                                    <p className="text-xs text-rose-400 font-medium">{form.errors.payment_proof}</p>
+                                )}
                                 <button
                                     type="submit"
                                     disabled={form.processing}
-                                    className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+                                    className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white font-bold text-xs rounded-xl shadow-md transition-all hover:opacity-95"
                                 >
                                     {form.processing ? 'Mengunggah...' : 'Kirim Bukti Transfer'}
                                 </button>

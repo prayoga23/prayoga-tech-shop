@@ -109,11 +109,11 @@ export default function JasaPembuatan() {
         ? projects
         : projects.filter(p => p.category === selectedCategory);
 
-    const whatsappNumber = settings?.whatsapp_number || '628123456789';
+    const whatsappNumber = settings?.whatsapp_number || '628990703408';
 
     return (
         <BuyerLayout>
-            <Head title="Kalkulator Estimasi & Portofolio Jasa Pembuatan Aplikasi Website & Android - Prayoga Tech" />
+            <Head title="Jasa Pembuatan Aplikasi Website & Android - Prayoga Tech" />
 
             <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-12">
@@ -147,8 +147,8 @@ export default function JasaPembuatan() {
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
                                 className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all border ${selectedCategory === cat.id
-                                        ? 'bg-gradient-to-r from-indigo-600 to-cyan-500 text-white border-indigo-400 shadow-lg'
-                                        : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700'
+                                    ? 'bg-gradient-to-r from-indigo-600 to-cyan-500 text-white border-indigo-400 shadow-lg'
+                                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700'
                                     }`}
                             >
                                 {cat.label}

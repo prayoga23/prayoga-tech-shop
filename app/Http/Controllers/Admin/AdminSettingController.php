@@ -16,7 +16,7 @@ class AdminSettingController extends Controller
         $settings = [
             'store_name' => Setting::get('store_name', 'Prayoga Tech'),
             'store_description' => Setting::get('store_description', 'Penyedia Layanan Jasa Pembuatan Aplikasi & Akun Premium Terpercaya'),
-            'whatsapp_number' => Setting::get('whatsapp_number', '628123456789'),
+            'whatsapp_number' => Setting::get('whatsapp_number', '628990703408'),
             'store_logo_path' => Setting::get('store_logo_path'),
             'social_instagram' => Setting::get('social_instagram', '#'),
             'social_tiktok' => Setting::get('social_tiktok', '#'),
@@ -25,7 +25,7 @@ class AdminSettingController extends Controller
             'wa_notification_enabled' => Setting::get('wa_notification_enabled', env('WA_NOTIFICATION_ENABLED', 'false')),
             'wa_meta_business_token' => Setting::get('wa_meta_business_token', env('WA_META_BUSINESS_TOKEN', '')),
             'wa_meta_phone_number_id' => Setting::get('wa_meta_phone_number_id', env('WA_META_PHONE_NUMBER_ID', '')),
-            'wa_notification_recipient' => Setting::get('wa_notification_recipient', env('WA_NOTIFICATION_RECIPIENT', '628123456789')),
+            'wa_notification_recipient' => Setting::get('wa_notification_recipient', env('WA_NOTIFICATION_RECIPIENT', '628990703408')),
         ];
 
         return Inertia::render('Admin/Settings', [

@@ -291,7 +291,8 @@ class DatabaseSeeder extends Seeder
         );
 
         // 5. Seed General Settings
-        Setting::updateOrCreate(['key' => 'whatsapp_number'], ['value' => '628123456789']);
+        Setting::updateOrCreate(['key' => 'whatsapp_number'], ['value' => '628990703408']);
+        Setting::updateOrCreate(['key' => 'wa_notification_recipient'], ['value' => '628990703408']);
         Setting::updateOrCreate(['key' => 'store_name'], ['value' => 'Prayoga Tech Software House']);
         Setting::updateOrCreate(['key' => 'store_logo_path'], ['value' => 'logo.png']);
         Setting::updateOrCreate(['key' => 'store_description'], ['value' => 'Penyedia Jasa Pembuatan Aplikasi Website & Android Profesional, Cepat, Terpercaya, dan Bergaransi Resmi.']);

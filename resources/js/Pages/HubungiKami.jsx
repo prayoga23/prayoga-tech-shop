@@ -4,7 +4,7 @@ import BuyerLayout from '@/Layouts/BuyerLayout';
 
 export default function HubungiKami() {
     const { settings } = usePage().props;
-    const whatsappNumber = settings?.whatsapp_number || '628123456789';
+    const whatsappNumber = settings?.whatsapp_number || '628990703408';
 
     const [formState, setFormState] = useState({
         name: '',
@@ -26,7 +26,7 @@ export default function HubungiKami() {
 
             <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 md:px-8">
                 <div className="max-w-4xl mx-auto space-y-10">
-                    
+
                     <div className="text-center space-y-3">
                         <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
                             Konsultasi Bebas Biaya
@@ -38,7 +38,7 @@ export default function HubungiKami() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                        
+
                         {/* Info Column */}
                         <div className="md:col-span-5 space-y-4">
                             <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
@@ -88,7 +88,7 @@ export default function HubungiKami() {
                                         type="text"
                                         value={formState.whatsapp}
                                         onChange={(e) => setFormState({ ...formState, whatsapp: e.target.value })}
-                                        placeholder="081234567890"
+                                        placeholder="08990703408"
                                         className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white font-mono"
                                         required
                                     />

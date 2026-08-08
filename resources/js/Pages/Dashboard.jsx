@@ -32,7 +32,7 @@ export default function Dashboard({ auth, orders = [], settings }) {
     const translateStatus = (status) => {
         switch (status) {
             case 'pending': return 'Belum Bayar';
-            case 'paid': return 'Verifikasi / Dalam Pengerjaan';
+            case 'paid': return 'Menunggu Konfirmasi Admin';
             case 'completed': return 'Selesai & Serah Terima';
             case 'cancelled': return 'Dibatalkan';
             default: return status;

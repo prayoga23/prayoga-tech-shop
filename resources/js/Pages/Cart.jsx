@@ -33,7 +33,7 @@ export default function Cart({ products = [], paymentMethods = [] }) {
     // Load cart items from localStorage on mount
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        
+
         const resolved = storedCart.map(item => {
             let foundPkg = null;
             let foundProd = null;
@@ -151,7 +151,7 @@ export default function Cart({ products = [], paymentMethods = [] }) {
 
             <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-8">
-                    
+
                     <div className="text-center space-y-2">
                         <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Keranjang Layanan</span>
                         <h1 className="text-3xl font-black text-white">Ringkasan Pesanan Software House</h1>
@@ -175,7 +175,7 @@ export default function Cart({ products = [], paymentMethods = [] }) {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                            
+
                             {/* Left Item List */}
                             <div className="lg:col-span-7 space-y-4">
                                 <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
@@ -261,7 +261,7 @@ export default function Cart({ products = [], paymentMethods = [] }) {
                                                 type="text"
                                                 value={form.data.customer_whatsapp}
                                                 onChange={(e) => form.setData('customer_whatsapp', e.target.value)}
-                                                placeholder="081234567890"
+                                                placeholder="08990703408"
                                                 className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white font-mono"
                                                 required
                                             />

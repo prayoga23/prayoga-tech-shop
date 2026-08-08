@@ -65,7 +65,7 @@ export default function Welcome({ auth, products = [], categories = [], selected
         return base;
     };
 
-    const whatsappNumber = settings?.whatsapp_number || '628123456789';
+    const whatsappNumber = settings?.whatsapp_number || '628990703408';
 
     // Static Portfolios for Showcase
     const portfolioShowcase = [
@@ -419,7 +419,7 @@ export default function Welcome({ auth, products = [], categories = [], selected
                                 <span className="px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
                                     Simulasi Anggaran Proyek Cepat
                                 </span>
-                                <h2 className="text-2xl sm:text-4xl font-black text-white">Kalkulator Estimasi Biaya Pembuatan Application</h2>
+                                <h2 className="text-2xl sm:text-4xl font-black text-white">Jasa Pembuatan Aplikasi Website & Android - Prayoga Tech</h2>
                                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
                                     Hitung perkiraan biaya proyek website atau aplikasi Android Anda secara instan. Pilih platform dan fitur yang Anda butuhkan di samping.
                                 </p>
@@ -460,8 +460,8 @@ export default function Welcome({ auth, products = [], categories = [], selected
                                                 type="button"
                                                 onClick={() => setEstPlatform(p.id)}
                                                 className={`py-2 px-3 text-xs font-bold rounded-xl border transition-all ${estPlatform === p.id
-                                                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
-                                                        : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                                                    ? 'bg-indigo-600 text-white border-indigo-500 shadow-md'
+                                                    : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
                                                     }`}
                                             >
                                                 {p.label}
@@ -485,8 +485,8 @@ export default function Welcome({ auth, products = [], categories = [], selected
                                                     type="button"
                                                     onClick={() => setEstCategory(c.id)}
                                                     className={`py-2 px-3 text-[11px] font-bold rounded-xl border transition-all ${estCategory === c.id
-                                                            ? 'bg-cyan-600 text-white border-cyan-500 shadow-md'
-                                                            : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
+                                                        ? 'bg-cyan-600 text-white border-cyan-500 shadow-md'
+                                                        : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
                                                         }`}
                                                 >
                                                     {c.label}
@@ -509,8 +509,8 @@ export default function Welcome({ auth, products = [], categories = [], selected
                                             <label
                                                 key={f.key}
                                                 className={`p-2.5 rounded-xl border flex items-center gap-2 cursor-pointer transition-all ${estFeatures[f.key]
-                                                        ? 'bg-indigo-950/80 border-indigo-500/60 text-white'
-                                                        : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
+                                                    ? 'bg-indigo-950/80 border-indigo-500/60 text-white'
+                                                    : 'bg-slate-800/60 border-slate-700/80 text-slate-400'
                                                     }`}
                                             >
                                                 <input

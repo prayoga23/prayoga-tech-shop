@@ -45,7 +45,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'settings' => [
                 'store_name' => \App\Models\Setting::get('store_name', 'Prayoga Tech'),
-                'whatsapp_number' => \App\Models\Setting::get('whatsapp_number', '628123456789'),
+                'whatsapp_number' => \App\Models\Setting::get('whatsapp_number', '628990703408'),
                 'store_description' => \App\Models\Setting::get('store_description', 'Penyedia Layanan Jasa Pembuatan Aplikasi & Akun Premium Terpercaya'),
                 'store_logo_path' => \App\Models\Setting::get('store_logo_path'),
             ],

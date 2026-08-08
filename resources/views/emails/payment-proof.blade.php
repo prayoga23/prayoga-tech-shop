@@ -217,10 +217,21 @@
             @if($order->payment_proof_path)
                 <h3 style="font-size: 15px; color: #1e293b; margin-bottom: 12px;">Lampiran Bukti Pembayaran</h3>
                 <div class="proof-container">
-                    @if(isset($proofUrl) && $proofUrl)
+                    @php
+                        $ext = strtolower(pathinfo($order->payment_proof_path, PATHINFO_EXTENSION));
+                        $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+                    @endphp
+
+                    @if($isImage && isset($proofUrl) && $proofUrl)
                         <img src="{{ $proofUrl }}" alt="Bukti Pembayaran #{{ $order->order_number }}" class="proof-image">
                     @else
-                        <p style="font-size: 13px; color: #64748b;">Bukti pembayaran dilampirkan dalam email ini atau dapat dilihat melalui Admin Panel.</p>
+                        <p style="font-size: 14px; color: #1e293b; margin-bottom: 8px;"><strong>Bukti Pembayaran (Dokumen PDF)</strong></p>
+                        <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">File telah terlampir pada email ini atau dapat dilihat melalui tautan berikut:</p>
+                        @if(isset($proofUrl) && $proofUrl)
+                            <a href="{{ $proofUrl }}" target="_blank" style="display: inline-block; background-color: #e11d48; color: #ffffff; text-decoration: none; padding: 10px 20px; font-size: 13px; font-weight: 600; border-radius: 6px;">
+                                📄 Buka / Download PDF Bukti Pembayaran
+                            </a>
+                        @endif
                     @endif
                 </div>
             @endif

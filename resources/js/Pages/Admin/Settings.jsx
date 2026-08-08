@@ -15,7 +15,7 @@ export default function Settings({ settings }) {
         wa_notification_enabled: settings.wa_notification_enabled === 'true' || settings.wa_notification_enabled === true,
         wa_meta_business_token: settings.wa_meta_business_token || '',
         wa_meta_phone_number_id: settings.wa_meta_phone_number_id || '',
-        wa_notification_recipient: settings.wa_notification_recipient || '628123456789',
+        wa_notification_recipient: settings.wa_notification_recipient || '628990703408',
     });
 
     const handleSubmit = (e) => {
@@ -98,12 +98,12 @@ export default function Settings({ settings }) {
                                     type="text"
                                     value={form.data.whatsapp_number}
                                     onChange={(e) => form.setData('whatsapp_number', e.target.value)}
-                                    placeholder="Gunakan kode negara, contoh: 628123456789"
+                                    placeholder="Gunakan kode negara, contoh: 628990703408"
                                     className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/20 transition-all font-mono font-bold text-indigo-650"
                                     required
                                 />
                                 <span className="text-[10px] text-slate-500 block mt-1.5 leading-relaxed font-semibold">
-                                    Masukkan nomor WhatsApp dengan awalan kode negara. Contoh: <strong>628123456789</strong>. Digunakan untuk tombol WhatsApp di halaman publik.
+                                    Masukkan nomor WhatsApp dengan awalan kode negara. Contoh: <strong>628990703408</strong>. Digunakan untuk tombol WhatsApp di halaman publik.
                                 </span>
                                 {form.errors.whatsapp_number && <p className="text-rose-600 text-xs font-medium mt-1">{form.errors.whatsapp_number}</p>}
                             </div>
@@ -212,7 +212,7 @@ export default function Settings({ settings }) {
                                                 type="text"
                                                 value={form.data.wa_notification_recipient}
                                                 onChange={(e) => form.setData('wa_notification_recipient', e.target.value)}
-                                                placeholder="628123456789"
+                                                placeholder="628990703408"
                                                 className="w-full bg-white border border-emerald-200 rounded-xl px-3.5 py-2 text-slate-800 text-xs font-mono font-bold focus:outline-none focus:border-emerald-500"
                                             />
                                         </div>

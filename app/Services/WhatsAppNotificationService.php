@@ -21,7 +21,7 @@ class WhatsAppNotificationService
 
         $token = Setting::get('wa_meta_business_token', env('WA_META_BUSINESS_TOKEN'));
         $phoneNumberId = Setting::get('wa_meta_phone_number_id', env('WA_META_PHONE_NUMBER_ID'));
-        $recipient = Setting::get('wa_notification_recipient', env('WA_NOTIFICATION_RECIPIENT', '628123456789'));
+        $recipient = Setting::get('wa_notification_recipient', env('WA_NOTIFICATION_RECIPIENT', '628990703408'));
 
         if (!$token || !$phoneNumberId || !$recipient) {
             Log::warning('WhatsApp Meta Business API credentials missing for payment proof notification.');

@@ -89,7 +89,7 @@ class OrderController extends Controller
     public function uploadProof(Request $request, string $orderNumber): RedirectResponse
     {
         $request->validate([
-            'payment_proof' => 'required|image|mimes:jpeg,png,jpg|max:4096',
+            'payment_proof' => 'required|file|mimes:jpeg,jpg,png,webp,pdf|max:10240',
         ]);
 
         $order = Order::where('order_number', $orderNumber)->firstOrFail();

@@ -303,32 +303,65 @@ export default function Show({ order, groupOrders = [] }) {
                         <h3 className="text-sm font-bold text-slate-800 border-b border-slate-100 pb-3">Bukti Pembayaran</h3>
                         
                         {order.payment_proof_path ? (
-                            <div className="space-y-3">
-                                <div 
-                                    onClick={() => setIsZoomed(true)} 
-                                    className="border border-slate-150 bg-slate-50 rounded-xl overflow-hidden cursor-zoom-in relative aspect-[3/4] flex items-center justify-center group shadow-inner"
-                                >
-                                    <img 
-                                        src={`/storage/${order.payment_proof_path}`} 
-                                        alt="Bukti Pembayaran" 
-                                        className="max-w-full max-h-full object-contain"
-                                    />
-                                    <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
-                                        <span className="px-3 py-1.5 bg-white/95 text-[10px] font-bold text-slate-700 rounded-lg border border-slate-200 shadow-xl">
-                                            Klik untuk memperbesar
-                                        </span>
+                            order.payment_proof_path.toLowerCase().endsWith('.pdf') ? (
+                                <div className="border border-slate-200 bg-slate-50 rounded-xl p-5 text-center space-y-3 shadow-inner">
+                                    <div className="w-14 h-14 mx-auto rounded-2xl bg-rose-100 border border-rose-200 flex items-center justify-center text-rose-600 shadow-sm">
+                                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p className="text-xs font-bold text-slate-700">Bukti Pembayaran (Dokumen PDF)</p>
+                                        <p className="text-[11px] text-slate-400 truncate max-w-[200px] mx-auto mt-0.5">{order.payment_proof_path.split('/').pop()}</p>
+                                    </div>
+                                    <div className="pt-1 flex flex-col gap-2">
+                                        <a
+                                            href={`/storage/${order.payment_proof_path}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex items-center justify-center gap-2 w-full py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-sm"
+                                        >
+                                            <span>Buka / Download PDF</span>
+                                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                                            </svg>
+                                        </a>
+                                        <button
+                                            onClick={() => setIsZoomed(true)}
+                                            className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 transition-colors"
+                                        >
+                                            Pratinjau PDF Integrasi
+                                        </button>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => setIsZoomed(true)}
-                                    className="w-full py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-650 text-slate-600 transition-colors shadow-sm"
-                                >
-                                    Perbesar Gambar Receipt
-                                </button>
-                            </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <div 
+                                        onClick={() => setIsZoomed(true)} 
+                                        className="border border-slate-150 bg-slate-50 rounded-xl overflow-hidden cursor-zoom-in relative aspect-[3/4] flex items-center justify-center group shadow-inner"
+                                    >
+                                        <img 
+                                            src={`/storage/${order.payment_proof_path}`} 
+                                            alt="Bukti Pembayaran" 
+                                            className="max-w-full max-h-full object-contain"
+                                        />
+                                        <div className="absolute inset-0 bg-slate-900/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
+                                            <span className="px-3 py-1.5 bg-white/95 text-[10px] font-bold text-slate-700 rounded-lg border border-slate-200 shadow-xl">
+                                                Klik untuk memperbesar
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setIsZoomed(true)}
+                                        className="w-full py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-semibold text-slate-600 transition-colors shadow-sm"
+                                    >
+                                        Perbesar Gambar Receipt
+                                    </button>
+                                </div>
+                            )
                         ) : (
                             <div className="py-12 text-center text-slate-400 text-xs font-medium border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-                                <svg className="w-10 h-10 mx-auto mb-2 text-slate-205 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="w-10 h-10 mx-auto mb-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 Bukti transfer belum diunggah oleh pembeli.
@@ -344,18 +377,39 @@ export default function Show({ order, groupOrders = [] }) {
                     onClick={() => setIsZoomed(false)}
                     className="fixed inset-0 bg-slate-900/90 z-[60] flex items-center justify-center p-4 cursor-zoom-out backdrop-blur-sm"
                 >
-                    <div className="relative max-w-4xl max-h-[90vh] flex items-center justify-center">
-                        <img 
-                            src={`/storage/${order.payment_proof_path}`} 
-                            alt="Bukti Transfer Zoomed" 
-                            className="max-w-full max-h-[85vh] object-contain rounded-lg border border-slate-200 bg-white shadow-2xl"
-                        />
-                        <button 
-                            onClick={(e) => { e.stopPropagation(); setIsZoomed(false); }}
-                            className="absolute -top-12 right-0 px-3 py-2 bg-white border border-slate-200 text-slate-600 hover:text-slate-900 rounded-xl text-xs font-bold transition-all shadow-xl"
-                        >
-                            Tutup
-                        </button>
+                    <div className="relative w-full max-w-4xl max-h-[90vh] flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
+                        {order.payment_proof_path.toLowerCase().endsWith('.pdf') ? (
+                            <div className="w-full h-[85vh] bg-white rounded-xl overflow-hidden shadow-2xl relative flex flex-col">
+                                <div className="p-3 bg-slate-800 text-white flex items-center justify-between">
+                                    <span className="text-xs font-bold truncate">Bukti Transfer PDF - #{order.order_number}</span>
+                                    <button 
+                                        onClick={() => setIsZoomed(false)}
+                                        className="px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-bold transition-all"
+                                    >
+                                        Tutup
+                                    </button>
+                                </div>
+                                <iframe 
+                                    src={`/storage/${order.payment_proof_path}`} 
+                                    className="w-full h-full border-0"
+                                    title="Bukti Transfer PDF"
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                <img 
+                                    src={`/storage/${order.payment_proof_path}`} 
+                                    alt="Bukti Transfer Zoomed" 
+                                    className="max-w-full max-h-[85vh] object-contain rounded-lg border border-slate-200 bg-white shadow-2xl"
+                                />
+                                <button 
+                                    onClick={() => setIsZoomed(false)}
+                                    className="absolute -top-12 right-0 px-3 py-2 bg-white border border-slate-200 text-slate-600 hover:text-slate-900 rounded-xl text-xs font-bold transition-all shadow-xl"
+                                >
+                                    Tutup
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

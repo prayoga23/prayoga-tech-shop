@@ -43,7 +43,7 @@ export default function BuyerLayout({ children }) {
         window.location.href = route('katalog') + `?search=${encodeURIComponent(searchVal)}`;
     };
 
-    const whatsappNumber = settings?.whatsapp_number || '628123456789';
+    const whatsappNumber = settings?.whatsapp_number || '628990703408';
     const storeName = settings?.store_name || 'Prayoga Tech Software House';
 
     return (
