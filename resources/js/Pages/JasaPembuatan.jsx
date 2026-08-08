@@ -115,21 +115,21 @@ export default function JasaPembuatan() {
         <BuyerLayout>
             <Head title="Jasa Pembuatan Aplikasi Website & Android - Prayoga Tech" />
 
-            <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 md:px-8">
+            <div className="bg-slate-50 text-slate-900 min-h-screen py-12 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-12">
 
                     {/* Header */}
                     <div className="text-center space-y-3 max-w-3xl mx-auto">
-                        <span className="px-3.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 text-xs font-bold border border-cyan-500/30">
+                        <span className="px-3.5 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-extrabold border border-indigo-200">
                             Portofolio & Konsultasi Software House
                         </span>
-                        <h1 className="text-3xl sm:text-5xl font-black text-white leading-tight">
+                        <h1 className="text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
                             Jasa Pembuatan Aplikasi <br />
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-cyan-300 to-emerald-400">
+                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-cyan-600 to-emerald-600">
                                 Website & Android Custom
                             </span>
                         </h1>
-                        <p className="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed font-medium">
                             Jelajahi rekam jejak hasil pengerjaan proyek software house kami. Mulai dari sistem informasi perusahaan, aplikasi mobile Android, toko online, hingga desain UI/UX interaktif.
                         </p>
                     </div>
@@ -137,21 +137,22 @@ export default function JasaPembuatan() {
                     {/* Filter Category Tabs */}
                     <div className="flex flex-wrap items-center justify-center gap-2">
                         {[
-                            { id: 'all', label: 'Semua Proyek' },
-                            { id: 'web', label: '🌐 Website & Web App' },
-                            { id: 'applications', label: '📱 Aplikasi Android Mobile' },
-                            { id: 'uiux', label: '🎨 UI/UX Design (Figma)' },
-                            { id: 'data-analyst', label: '📊 Dashboard Analytics' },
+                            { id: 'all', label: 'Semua Proyek', icon: 'fa-layer-group' },
+                            { id: 'web', label: 'Website & Web App', icon: 'fa-globe' },
+                            { id: 'applications', label: 'Aplikasi Android Mobile', icon: 'fa-mobile-screen-button' },
+                            { id: 'uiux', label: 'UI/UX Design (Figma)', icon: 'fa-palette' },
+                            { id: 'data-analyst', label: 'Dashboard Analytics', icon: 'fa-chart-pie' },
                         ].map((cat) => (
                             <button
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
-                                className={`px-4 py-2 rounded-2xl text-xs font-bold transition-all border ${selectedCategory === cat.id
-                                    ? 'bg-gradient-to-r from-indigo-600 to-cyan-500 text-white border-indigo-400 shadow-lg'
-                                    : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white hover:border-slate-700'
+                                className={`px-4 py-2 rounded-2xl text-xs font-extrabold transition-all border flex items-center gap-2 ${selectedCategory === cat.id
+                                    ? 'bg-gradient-to-r from-indigo-600 to-cyan-600 text-white border-indigo-500 shadow-sm'
+                                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                                     }`}
                             >
-                                {cat.label}
+                                <i className={`fa-solid ${cat.icon}`}></i>
+                                <span>{cat.label}</span>
                             </button>
                         ))}
                     </div>
@@ -161,9 +162,9 @@ export default function JasaPembuatan() {
                         {filteredProjects.map((project, idx) => (
                             <div
                                 key={idx}
-                                className="rounded-3xl bg-slate-900 border border-slate-800 overflow-hidden flex flex-col hover:border-indigo-500/50 transition-all hover:-translate-y-1 group shadow-xl"
+                                className="rounded-3xl bg-white border border-slate-200 overflow-hidden flex flex-col hover:border-indigo-400 transition-all hover:-translate-y-1 group shadow-sm hover:shadow-md"
                             >
-                                <div className="h-52 bg-slate-950 overflow-hidden relative">
+                                <div className="h-52 bg-slate-100 overflow-hidden relative">
                                     <img
                                         src={project.image}
                                         alt={project.title}
@@ -172,25 +173,25 @@ export default function JasaPembuatan() {
                                             e.target.src = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80';
                                         }}
                                     />
-                                    <div className="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-800 text-cyan-300 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                    <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-md border border-slate-200 text-indigo-700 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider shadow-xs">
                                         {project.category}
                                     </div>
                                 </div>
 
                                 <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
                                     <div className="space-y-2">
-                                        <h3 className="text-base font-bold text-white group-hover:text-cyan-300 transition-colors">
+                                        <h3 className="text-base font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">
                                             {project.title}
                                         </h3>
-                                        <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                                        <p className="text-xs text-slate-600 leading-relaxed font-normal">
                                             {project.description}
                                         </p>
                                     </div>
 
-                                    <div className="space-y-3 pt-3 border-t border-slate-800">
+                                    <div className="space-y-3 pt-3 border-t border-slate-100">
                                         <div className="flex flex-wrap gap-1.5">
                                             {project.tags.map((tag, tIdx) => (
-                                                <span key={tIdx} className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-300">
+                                                <span key={tIdx} className="text-[10px] font-mono px-2.5 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-700 font-medium">
                                                     {tag}
                                                 </span>
                                             ))}
@@ -202,7 +203,7 @@ export default function JasaPembuatan() {
                                                     href={project.link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold rounded-xl transition-all"
+                                                    className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold rounded-xl transition-all shadow-2xs"
                                                 >
                                                     Demo Live &rarr;
                                                 </a>
@@ -212,7 +213,7 @@ export default function JasaPembuatan() {
                                                     href={project.figma}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-[11px] font-bold rounded-xl transition-all"
+                                                    className="px-3.5 py-1.5 bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold rounded-xl transition-all shadow-2xs"
                                                 >
                                                     Figma File &rarr;
                                                 </a>
@@ -225,7 +226,7 @@ export default function JasaPembuatan() {
                     </div>
 
                     {/* Bottom Custom Project CTA */}
-                    <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 p-8 md:p-12 text-center space-y-6 shadow-2xl">
+                    <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-500/40 p-8 md:p-12 text-center space-y-6 shadow-xl">
                         <h2 className="text-2xl sm:text-3xl font-black text-white max-w-xl mx-auto">
                             Punya Kebutuhan Fitur Aplikasi Custom Sendiri?
                         </h2>
@@ -239,7 +240,8 @@ export default function JasaPembuatan() {
                                 rel="noopener noreferrer"
                                 className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs rounded-2xl shadow-xl transition-all inline-flex items-center gap-2"
                             >
-                                Chat Konsultasi WA Sekarang &rarr;
+                                <i className="fa-brands fa-whatsapp text-sm"></i>
+                                <span>Chat Konsultasi WA Sekarang &rarr;</span>
                             </a>
                         </div>
                     </div>

@@ -149,26 +149,26 @@ export default function Cart({ products = [], paymentMethods = [] }) {
         <BuyerLayout>
             <Head title="Keranjang Pesanan Layanan - Prayoga Tech" />
 
-            <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
+            <div className="bg-slate-50 text-slate-900 min-h-screen py-10 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-8">
 
                     <div className="text-center space-y-2">
-                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-widest">Keranjang Layanan</span>
-                        <h1 className="text-3xl font-black text-white">Ringkasan Pesanan Software House</h1>
+                        <span className="text-xs font-extrabold text-indigo-600 uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">Keranjang Layanan</span>
+                        <h1 className="text-3xl font-black text-slate-900">Ringkasan Pesanan Software House</h1>
                     </div>
 
                     {cartItems.length === 0 ? (
-                        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto shadow-xl">
-                            <div className="w-16 h-16 rounded-full bg-slate-800 border border-slate-700 text-slate-400 flex items-center justify-center mx-auto text-3xl">
-                                🛒
+                        <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto shadow-sm">
+                            <div className="w-16 h-16 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 flex items-center justify-center mx-auto text-2xl shadow-2xs">
+                                <i className="fa-solid fa-cart-shopping"></i>
                             </div>
-                            <h3 className="text-lg font-bold text-white">Keranjang Pesanan Masih Kosong</h3>
-                            <p className="text-xs text-slate-400 leading-relaxed">
+                            <h3 className="text-lg font-extrabold text-slate-900">Keranjang Pesanan Masih Kosong</h3>
+                            <p className="text-xs text-slate-600 leading-relaxed font-medium">
                                 Anda belum menambahkan paket pembuatan website atau aplikasi Android ke keranjang.
                             </p>
                             <Link
                                 href={route('katalog')}
-                                className="inline-block px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-bold text-xs rounded-xl shadow-md transition-all"
+                                className="inline-block px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white font-extrabold text-xs rounded-xl shadow-md transition-all"
                             >
                                 Lihat Katalog Paket Jasa &rarr;
                             </Link>
@@ -178,30 +178,30 @@ export default function Cart({ products = [], paymentMethods = [] }) {
 
                             {/* Left Item List */}
                             <div className="lg:col-span-7 space-y-4">
-                                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-                                    <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">
+                                <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                                    <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">
                                         Daftar Paket Dipesan ({cartItems.length} Layanan)
                                     </h3>
 
                                     <div className="space-y-3">
                                         {cartItems.map((item, idx) => (
-                                            <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+                                            <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-4">
                                                 <div className="space-y-1 truncate">
-                                                    <span className="text-[9px] font-bold text-indigo-400 uppercase tracking-wider block">
+                                                    <span className="text-[9px] font-extrabold text-indigo-600 uppercase tracking-wider block">
                                                         {item.category_name}
                                                     </span>
-                                                    <h4 className="font-bold text-xs text-white truncate">{item.product_name}</h4>
-                                                    <p className="text-[11px] text-cyan-300 font-semibold">{item.package_name}</p>
+                                                    <h4 className="font-extrabold text-xs text-slate-900 truncate">{item.product_name}</h4>
+                                                    <p className="text-[11px] text-indigo-700 font-bold">{item.package_name}</p>
                                                     {item.notes && (
-                                                        <p className="text-[10px] text-slate-400 italic">Brief: "{item.notes}"</p>
+                                                        <p className="text-[10px] text-slate-500 italic">Brief: "{item.notes}"</p>
                                                     )}
                                                 </div>
 
                                                 <div className="text-right shrink-0 space-y-2">
-                                                    <span className="font-black text-sm text-white block">{formatIDR(item.price)}</span>
+                                                    <span className="font-black text-sm text-slate-900 block">{formatIDR(item.price)}</span>
                                                     <button
                                                         onClick={() => handleRemoveItem(item.package_id)}
-                                                        className="text-[10px] text-rose-400 hover:underline font-bold"
+                                                        className="text-[10px] text-rose-600 hover:underline font-bold"
                                                     >
                                                         Hapus
                                                     </button>
@@ -215,64 +215,64 @@ export default function Cart({ products = [], paymentMethods = [] }) {
                             {/* Right Checkout Form */}
                             <div className="lg:col-span-5 space-y-6">
                                 {!auth.user ? (
-                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 text-center space-y-3 shadow-xl">
-                                        <h3 className="text-sm font-bold text-white">Login untuk Melanjutkan Checkout</h3>
-                                        <p className="text-xs text-slate-400">
+                                    <div className="bg-white border border-slate-200 rounded-3xl p-6 text-center space-y-3 shadow-sm">
+                                        <h3 className="text-sm font-extrabold text-slate-900">Login untuk Melanjutkan Checkout</h3>
+                                        <p className="text-xs text-slate-600">
                                             Masuk ke akun Anda untuk menyelesaikan transaksi pemesanan layanan.
                                         </p>
                                         <div className="pt-2 flex justify-center gap-2">
-                                            <Link href={route('login')} className="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl">
+                                            <Link href={route('login')} className="px-5 py-2 bg-indigo-600 text-white font-bold text-xs rounded-xl shadow-2xs">
                                                 Masuk / Login
                                             </Link>
-                                            <Link href={route('register')} className="px-5 py-2 bg-slate-800 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl">
+                                            <Link href={route('register')} className="px-5 py-2 bg-slate-100 text-slate-800 border border-slate-200 font-bold text-xs rounded-xl">
                                                 Daftar
                                             </Link>
                                         </div>
                                     </div>
                                 ) : (
-                                    <form onSubmit={handleSubmitOrder} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-5 shadow-xl">
-                                        <h3 className="text-sm font-bold text-white border-b border-slate-800 pb-3">Formulir Checkout Pesanan</h3>
+                                    <form onSubmit={handleSubmitOrder} className="bg-white border border-slate-200 rounded-3xl p-6 space-y-5 shadow-sm">
+                                        <h3 className="text-sm font-extrabold text-slate-900 border-b border-slate-100 pb-3">Formulir Checkout Pesanan</h3>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1">Nama Pemesan</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1">Nama Pemesan</label>
                                             <input
                                                 type="text"
                                                 value={form.data.customer_name}
                                                 onChange={(e) => form.setData('customer_name', e.target.value)}
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white"
                                                 required
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1">Email Klien</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1">Email Klien</label>
                                             <input
                                                 type="email"
                                                 value={form.data.customer_email}
                                                 onChange={(e) => form.setData('customer_email', e.target.value)}
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white font-mono"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white font-mono"
                                                 required
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1">Nomor WhatsApp Aktif</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1">Nomor WhatsApp Aktif</label>
                                             <input
                                                 type="text"
                                                 value={form.data.customer_whatsapp}
                                                 onChange={(e) => form.setData('customer_whatsapp', e.target.value)}
                                                 placeholder="08990703408"
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white font-mono"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white font-mono"
                                                 required
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1">Metode Pembayaran</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1">Metode Pembayaran</label>
                                             <select
                                                 value={form.data.payment_method_id}
                                                 onChange={(e) => form.setData('payment_method_id', e.target.value)}
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none"
                                             >
                                                 {paymentMethods.map(pm => (
                                                     <option key={pm.id} value={pm.id}>{pm.name}</option>
@@ -281,50 +281,50 @@ export default function Cart({ products = [], paymentMethods = [] }) {
                                         </div>
 
                                         {/* Promo Box */}
-                                        <div className="space-y-2 pt-2 border-t border-slate-800">
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider">Kode Kupon Promo</label>
+                                        <div className="space-y-2 pt-2 border-t border-slate-100">
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider">Kode Kupon Promo</label>
                                             <div className="flex gap-2">
                                                 <input
                                                     type="text"
                                                     value={promoCodeInput}
                                                     onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
                                                     placeholder="KODE PROMO"
-                                                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono uppercase"
+                                                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 font-mono uppercase focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none"
                                                     disabled={appliedPromo !== null}
                                                 />
                                                 {appliedPromo ? (
-                                                    <button type="button" onClick={handleRemovePromo} className="px-3 bg-rose-950 text-rose-300 border border-rose-800 rounded-xl text-xs font-bold">Hapus</button>
+                                                    <button type="button" onClick={handleRemovePromo} className="px-3 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold">Hapus</button>
                                                 ) : (
-                                                    <button type="button" onClick={handleApplyPromo} className="px-3 bg-indigo-600 text-white rounded-xl text-xs font-bold">Gunakan</button>
+                                                    <button type="button" onClick={handleApplyPromo} className="px-3 bg-indigo-600 text-white rounded-xl text-xs font-bold shadow-2xs">Gunakan</button>
                                                 )}
                                             </div>
                                             {promoMessage && (
-                                                <p className={`text-[10px] font-bold ${promoMessage.type === 'success' ? 'text-emerald-400' : 'text-rose-400'}`}>{promoMessage.text}</p>
+                                                <p className={`text-[10px] font-bold ${promoMessage.type === 'success' ? 'text-emerald-600' : 'text-rose-600'}`}>{promoMessage.text}</p>
                                             )}
                                         </div>
 
                                         {/* Total Summary */}
-                                        <div className="pt-3 border-t border-slate-800 space-y-2">
-                                            <div className="flex justify-between text-xs text-slate-400">
+                                        <div className="pt-3 border-t border-slate-100 space-y-2">
+                                            <div className="flex justify-between text-xs text-slate-600 font-medium">
                                                 <span>Subtotal:</span>
-                                                <span className="font-bold text-white">{formatIDR(totalPrice)}</span>
+                                                <span className="font-extrabold text-slate-900">{formatIDR(totalPrice)}</span>
                                             </div>
                                             {appliedPromo && (
-                                                <div className="flex justify-between text-xs text-emerald-400 font-bold">
+                                                <div className="flex justify-between text-xs text-emerald-600 font-bold">
                                                     <span>Diskon ({appliedPromo.code}):</span>
                                                     <span>-{formatIDR(appliedPromo.discount)}</span>
                                                 </div>
                                             )}
-                                            <div className="flex justify-between text-sm border-t border-slate-800 pt-2">
-                                                <span className="font-bold text-slate-300">Total Pembayaran:</span>
-                                                <span className="font-black text-cyan-400">{formatIDR(totalPrice - (appliedPromo ? appliedPromo.discount : 0))}</span>
+                                            <div className="flex justify-between text-sm border-t border-slate-100 pt-2">
+                                                <span className="font-extrabold text-slate-800">Total Pembayaran:</span>
+                                                <span className="font-black text-indigo-600">{formatIDR(totalPrice - (appliedPromo ? appliedPromo.discount : 0))}</span>
                                             </div>
                                         </div>
 
                                         <button
                                             type="submit"
                                             disabled={form.processing || cartItems.length === 0}
-                                            className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-black text-xs rounded-2xl shadow-xl transition-all"
+                                            className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white font-black text-xs rounded-2xl shadow-md transition-all"
                                         >
                                             {form.processing ? 'Memproses Pesanan...' : 'Proses Pesanan Sekarang'}
                                         </button>

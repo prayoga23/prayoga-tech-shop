@@ -122,14 +122,14 @@ export default function Show({ product, paymentMethods = [] }) {
         <BuyerLayout>
             <Head title={`Detail Paket ${product.name} - Prayoga Tech`} />
 
-            <div className="bg-slate-950 text-slate-100 min-h-screen py-10 px-4 md:px-8">
+            <div className="bg-slate-50 text-slate-900 min-h-screen py-10 px-4 md:px-8">
                 <div className="max-w-7xl mx-auto space-y-6">
 
                     {/* Back Link */}
                     <div>
                         <Link
                             href={route('katalog')}
-                            className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-cyan-400 font-bold transition-colors"
+                            className="inline-flex items-center gap-2 text-xs text-slate-600 hover:text-indigo-600 font-extrabold transition-colors"
                         >
                             &larr; Kembali ke Katalog Paket Jasa
                         </Link>
@@ -139,41 +139,41 @@ export default function Show({ product, paymentMethods = [] }) {
 
                         {/* Left Info Column */}
                         <div className="lg:col-span-5 space-y-6">
-                            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-6 shadow-xl relative overflow-hidden">
-                                <div className="flex items-center gap-4 border-b border-slate-800 pb-5">
-                                    <div className="w-14 h-14 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center font-black text-2xl shrink-0">
-                                        🌐
+                            <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-6 shadow-sm relative overflow-hidden">
+                                <div className="flex items-center gap-4 border-b border-slate-100 pb-5">
+                                    <div className="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center font-black text-xl shrink-0">
+                                        <i className="fa-solid fa-layer-group"></i>
                                     </div>
                                     <div>
-                                        <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-bold border border-indigo-500/30">
+                                        <span className="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 text-[10px] font-extrabold border border-indigo-200">
                                             {product.category?.name || 'Jasa Pembuatan'}
                                         </span>
-                                        <h1 className="text-xl font-bold text-white mt-1">{product.name}</h1>
+                                        <h1 className="text-xl font-extrabold text-slate-900 mt-1">{product.name}</h1>
                                     </div>
                                 </div>
 
                                 <div className="space-y-3">
-                                    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">Deskripsi Layanan</h3>
-                                    <p className="text-xs text-slate-400 leading-relaxed font-normal whitespace-pre-line">
+                                    <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Deskripsi Layanan</h3>
+                                    <p className="text-xs text-slate-600 leading-relaxed font-normal whitespace-pre-line">
                                         {product.description}
                                     </p>
                                 </div>
 
                                 {/* Features & Guarantee Checklist */}
-                                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-2.5">
-                                    <h4 className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Keunggulan Layanan Kami:</h4>
-                                    <ul className="space-y-2 text-xs text-slate-300 font-medium">
+                                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5">
+                                    <h4 className="text-xs font-extrabold text-indigo-600 uppercase tracking-wider">Keunggulan Layanan Kami:</h4>
+                                    <ul className="space-y-2 text-xs text-slate-700 font-medium">
                                         <li className="flex items-center gap-2">
-                                            <span className="text-emerald-400 font-bold">✓</span> Free Domain & Hosting (Paket Tertentu)
+                                            <i className="fa-solid fa-circle-check text-emerald-600"></i> Free Domain & Hosting (Paket Tertentu)
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <span className="text-emerald-400 font-bold">✓</span> Full Source Code & Database Hak Milik
+                                            <i className="fa-solid fa-circle-check text-emerald-600"></i> Full Source Code & Database Hak Milik
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <span className="text-emerald-400 font-bold">✓</span> Garansi Maintenance 1 - 6 Bulan
+                                            <i className="fa-solid fa-circle-check text-emerald-600"></i> Garansi Maintenance 1 - 6 Bulan
                                         </li>
                                         <li className="flex items-center gap-2">
-                                            <span className="text-emerald-400 font-bold">✓</span> Desain Responsive Mobile & Tablet
+                                            <i className="fa-solid fa-circle-check text-emerald-600"></i> Desain Responsive Mobile & Tablet
                                         </li>
                                     </ul>
                                 </div>
@@ -183,24 +183,24 @@ export default function Show({ product, paymentMethods = [] }) {
                         {/* Right Order Form Column */}
                         <div className="lg:col-span-7">
                             {!auth.user ? (
-                                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 text-center space-y-4 shadow-xl">
-                                    <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center mx-auto text-2xl">
-                                        🔒
+                                <div className="bg-white border border-slate-200 rounded-3xl p-8 text-center space-y-4 shadow-sm">
+                                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-200 flex items-center justify-center mx-auto text-xl">
+                                        <i className="fa-solid fa-lock"></i>
                                     </div>
-                                    <h3 className="text-lg font-extrabold text-white">Login Terlebih Dahulu</h3>
-                                    <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+                                    <h3 className="text-lg font-extrabold text-slate-900">Login Terlebih Dahulu</h3>
+                                    <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
                                         Untuk melakukan pemesanan paket pembuatan aplikasi, silakan masuk ke akun Anda atau mendaftar terlebih dahulu.
                                     </p>
                                     <div className="flex justify-center gap-3 pt-2">
                                         <Link
                                             href={route('login')}
-                                            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all"
+                                            className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-2xs transition-all"
                                         >
                                             Masuk Ke Akun
                                         </Link>
                                         <Link
                                             href={route('register')}
-                                            className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs rounded-xl transition-all"
+                                            className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 font-bold text-xs rounded-xl transition-all"
                                         >
                                             Daftar Baru
                                         </Link>
@@ -210,10 +210,10 @@ export default function Show({ product, paymentMethods = [] }) {
                                 <form onSubmit={handleSubmit} className="space-y-6">
 
                                     {/* 1. Select Package */}
-                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-                                        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                                    <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                                        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                                             <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-black flex items-center justify-center">1</span>
-                                            <h3 className="text-sm font-bold text-white">Pilih Varian Paket Layanan</h3>
+                                            <h3 className="text-sm font-extrabold text-slate-900">Pilih Varian Paket Layanan</h3>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -224,19 +224,19 @@ export default function Show({ product, paymentMethods = [] }) {
                                                         key={pkg.id}
                                                         onClick={() => handlePackageSelect(pkg)}
                                                         className={`p-4 rounded-2xl border transition-all cursor-pointer relative ${isSelected
-                                                                ? 'bg-indigo-950/80 border-indigo-500 shadow-md'
-                                                                : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                                                                ? 'bg-indigo-50/80 border-indigo-500 shadow-sm'
+                                                                : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                                                             }`}
                                                     >
                                                         {isSelected && (
-                                                            <span className="absolute top-3 right-3 text-cyan-400 font-bold text-xs">
+                                                            <span className="absolute top-3 right-3 text-indigo-600 font-extrabold text-xs">
                                                                 ✓ Terpilih
                                                             </span>
                                                         )}
-                                                        <h4 className="font-bold text-xs text-white pr-6">{pkg.name}</h4>
-                                                        <p className="font-black text-cyan-400 text-sm mt-1.5">{formatIDR(pkg.price)}</p>
-                                                        <p className="text-[10px] text-slate-400 mt-1 leading-relaxed">{pkg.description}</p>
-                                                        <div className="text-[9px] text-indigo-300 font-mono mt-2 pt-1 border-t border-slate-800">
+                                                        <h4 className="font-extrabold text-xs text-slate-900 pr-6">{pkg.name}</h4>
+                                                        <p className="font-black text-indigo-600 text-sm mt-1.5">{formatIDR(pkg.price)}</p>
+                                                        <p className="text-[10px] text-slate-600 mt-1 leading-relaxed">{pkg.description}</p>
+                                                        <div className="text-[9px] text-indigo-600 font-mono mt-2 pt-1 border-t border-slate-200">
                                                             Pengerjaan: ~{pkg.duration_days} Hari Kerja
                                                         </div>
                                                     </div>
@@ -246,52 +246,52 @@ export default function Show({ product, paymentMethods = [] }) {
                                     </div>
 
                                     {/* 2. Client Details & Brief Notes */}
-                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-                                        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                                    <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                                        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                                             <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-black flex items-center justify-center">2</span>
-                                            <h3 className="text-sm font-bold text-white">Informasi Klien & Brief Proyek</h3>
+                                            <h3 className="text-sm font-extrabold text-slate-900">Informasi Klien & Brief Proyek</h3>
                                         </div>
 
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div>
-                                                <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1.5">Nama Lengkap Pemesan</label>
+                                                <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1.5">Nama Lengkap Pemesan</label>
                                                 <input
                                                     type="text"
                                                     value={form.data.customer_name}
                                                     onChange={(e) => form.setData('customer_name', e.target.value)}
                                                     placeholder="Nama lengkap Anda"
-                                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white"
                                                     required
                                                 />
                                             </div>
 
                                             <div>
-                                                <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1.5">Email Klien (Untuk Notifikasi)</label>
+                                                <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1.5">Email Klien (Untuk Notifikasi)</label>
                                                 <input
                                                     type="email"
                                                     value={form.data.customer_email}
                                                     onChange={(e) => form.setData('customer_email', e.target.value)}
                                                     placeholder="email@domain.com"
-                                                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none font-mono"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white font-mono"
                                                     required
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1.5">Nomor WhatsApp Aktif</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1.5">Nomor WhatsApp Aktif</label>
                                             <input
                                                 type="text"
                                                 value={form.data.customer_whatsapp}
                                                 onChange={(e) => form.setData('customer_whatsapp', e.target.value)}
                                                 placeholder="Contoh: 08990703408"
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none font-mono"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white font-mono"
                                                 required
                                             />
                                         </div>
 
                                         <div>
-                                            <label className="block text-[10px] font-bold uppercase text-slate-400 tracking-wider mb-1.5">Catatan / Brief Spesifikasi Proyek (Opsional)</label>
+                                            <label className="block text-[10px] font-bold uppercase text-slate-700 tracking-wider mb-1.5">Catatan / Brief Spesifikasi Proyek (Opsional)</label>
                                             <textarea
                                                 value={projectNotes}
                                                 onChange={(e) => {
@@ -300,16 +300,16 @@ export default function Show({ product, paymentMethods = [] }) {
                                                 }}
                                                 placeholder="Tuliskan nama domain impian, konsep warna, fitur khusus, atau catatan penting lainnya..."
                                                 rows={3}
-                                                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+                                                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 focus:outline-none focus:bg-white"
                                             />
                                         </div>
                                     </div>
 
                                     {/* 3. Payment Method */}
-                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
-                                        <div className="flex items-center gap-2 border-b border-slate-800 pb-3">
+                                    <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
+                                        <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                                             <span className="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-black flex items-center justify-center">3</span>
-                                            <h3 className="text-sm font-bold text-white">Metode Pembayaran Resmi</h3>
+                                            <h3 className="text-sm font-extrabold text-slate-900">Metode Pembayaran Resmi</h3>
                                         </div>
 
                                         <div className="space-y-2">
@@ -320,15 +320,15 @@ export default function Show({ product, paymentMethods = [] }) {
                                                         key={pm.id}
                                                         onClick={() => form.setData('payment_method_id', pm.id)}
                                                         className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${isSelected
-                                                                ? 'bg-indigo-950/80 border-indigo-500'
-                                                                : 'bg-slate-950/60 border-slate-800 hover:border-slate-700'
+                                                                ? 'bg-indigo-50/80 border-indigo-500'
+                                                                : 'bg-slate-50 border-slate-200 hover:border-slate-300'
                                                             }`}
                                                     >
                                                         <div>
-                                                            <h4 className="font-bold text-xs text-white">{pm.name}</h4>
-                                                            <p className="text-[10px] text-slate-400 font-mono mt-0.5">{pm.account_number} a/n {pm.account_name}</p>
+                                                            <h4 className="font-extrabold text-xs text-slate-900">{pm.name}</h4>
+                                                            <p className="text-[10px] text-slate-500 font-mono mt-0.5">{pm.account_number} a/n {pm.account_name}</p>
                                                         </div>
-                                                        <span className="text-xs font-bold text-cyan-400">
+                                                        <span className="text-xs font-bold text-indigo-600">
                                                             {isSelected ? '✓ Terpilih' : 'Pilih'}
                                                         </span>
                                                     </div>
@@ -338,20 +338,20 @@ export default function Show({ product, paymentMethods = [] }) {
                                     </div>
 
                                     {/* Summary & Checkout Action */}
-                                    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 space-y-4 shadow-xl">
+                                    <div className="bg-white border border-slate-200 rounded-3xl p-6 space-y-4 shadow-sm">
                                         <div className="flex justify-between items-center text-xs">
-                                            <span className="text-slate-400">Paket Dipesan:</span>
-                                            <span className="font-bold text-white">{selectedPackage?.name}</span>
+                                            <span className="text-slate-600 font-medium">Paket Dipesan:</span>
+                                            <span className="font-extrabold text-slate-900">{selectedPackage?.name}</span>
                                         </div>
-                                        <div className="flex justify-between items-center text-xs border-t border-slate-800 pt-3">
-                                            <span className="text-slate-400">Total Investasi Proyek:</span>
-                                            <span className="text-lg font-black text-cyan-400">{formatIDR(selectedPackage?.price || 0)}</span>
+                                        <div className="flex justify-between items-center text-xs border-t border-slate-100 pt-3">
+                                            <span className="text-slate-600 font-medium">Total Investasi Proyek:</span>
+                                            <span className="text-lg font-black text-indigo-600">{formatIDR(selectedPackage?.price || 0)}</span>
                                         </div>
 
                                         <button
                                             type="submit"
                                             disabled={form.processing || !selectedPackage}
-                                            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-cyan-500 hover:from-indigo-500 hover:to-cyan-400 text-white font-black text-xs rounded-2xl shadow-xl transition-all hover:scale-[1.02]"
+                                            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 text-white font-black text-xs rounded-2xl shadow-md transition-all hover:scale-[1.01]"
                                         >
                                             {form.processing ? 'Memproses Order...' : 'Pesan Layanan Ini Sekarang'}
                                         </button>
@@ -360,7 +360,7 @@ export default function Show({ product, paymentMethods = [] }) {
                                             <button
                                                 type="button"
                                                 onClick={handleAddToCart}
-                                                className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition-all"
+                                                className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition-all"
                                             >
                                                 Tambah ke Keranjang
                                             </button>
@@ -368,8 +368,8 @@ export default function Show({ product, paymentMethods = [] }) {
                                                 type="button"
                                                 onClick={handleToggleWishlist}
                                                 className={`px-4 py-3 rounded-xl text-xs font-bold border transition-all ${inWishlist
-                                                        ? 'bg-rose-950/80 border-rose-600 text-rose-300'
-                                                        : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
+                                                        ? 'bg-rose-50 border-rose-200 text-rose-600'
+                                                        : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900'
                                                     }`}
                                             >
                                                 {inWishlist ? '♥ Wishlist' : '♡ Wishlist'}

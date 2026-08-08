@@ -153,8 +153,9 @@ export default function Settings({ settings }) {
                         <div className="absolute right-0 bottom-0 translate-x-3 translate-y-3 opacity-5 w-24 h-24 bg-emerald-500 rounded-full blur-xl"></div>
 
                         <h3 className="text-base font-bold text-slate-800 border-b border-slate-100 pb-3 mb-6 font-sans flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                                📩 <span>Notifikasi Bukti Pembayaran (SMTP & WhatsApp)</span>
+                            <span className="flex items-center gap-2 text-indigo-600">
+                                <i className="fa-solid fa-envelope-open-text"></i>
+                                <span>Notifikasi Bukti Pembayaran (SMTP & WhatsApp)</span>
                             </span>
                             <span className="text-xs text-emerald-600 font-semibold bg-emerald-50 px-2.5 py-1 rounded-full">Push Alert</span>
                         </h3>
@@ -169,7 +170,8 @@ export default function Settings({ settings }) {
                                         onClick={handleTestEmail}
                                         className="text-xs font-semibold px-3 py-1 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg shadow-2xs transition-colors flex items-center gap-1.5"
                                     >
-                                        🚀 <span>Tes Kirim Email Uji Coba</span>
+                                        <i className="fa-solid fa-paper-plane text-indigo-500"></i>
+                                        <span>Tes Kirim Email Uji Coba</span>
                                     </button>
                                 </div>
                                 <input
@@ -250,7 +252,8 @@ export default function Settings({ settings }) {
                             disabled={form.processing}
                             className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2 cursor-pointer"
                         >
-                            💾 <span>{form.processing ? 'Menyimpan...' : 'Simpan Semua Pengaturan'}</span>
+                            <i className="fa-solid fa-floppy-disk"></i>
+                            <span>{form.processing ? 'Menyimpan...' : 'Simpan Semua Pengaturan'}</span>
                         </button>
                     </div>
                 </form>
